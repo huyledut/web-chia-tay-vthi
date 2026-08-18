@@ -1,4 +1,6 @@
 import { StoryFlow } from "@/components/StoryFlow";
+import { fetchFireWishes } from "@/lib/fetch-wishes";
+import type { Wish } from "@/data/wishes";
 
 export const dynamic = "force-dynamic";
 
@@ -15,12 +17,19 @@ export default async function Home({
   const gui = first(params.gui);
   const buocNum = Number(first(params.buoc) ?? 0);
   const buoc = Number.isFinite(buocNum) ? Math.min(4, Math.max(0, buocNum)) : 0;
+  const step = gui === "ok" ? 4 : buoc;
+
+  let fireWishes: Wish[] = [];
+  if (step === 4) {
+    fireWishes = await fetchFireWishes();
+  }
 
   return (
     <main className="relative min-h-screen">
       <StoryFlow
         cameFromForm={gui === "ok"}
-        initialStep={gui === "ok" ? 4 : buoc}
+        initialStep={step}
+        fireWishes={fireWishes}
       />
     </main>
   );

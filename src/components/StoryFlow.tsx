@@ -6,6 +6,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { WishWall } from "./WishWall";
+import type { Wish } from "@/data/wishes";
 
 /* ── data ─────────────────────────────────────────────── */
 const MEMORY_PHOTOS = [
@@ -112,9 +113,11 @@ function EnvelopeVisual() {
 export function StoryFlow({
   cameFromForm = false,
   initialStep = 0,
+  fireWishes = [],
 }: {
   cameFromForm?: boolean;
   initialStep?: number;
+  fireWishes?: Wish[];
 }) {
   const displayStep = cameFromForm ? 4 : initialStep;
   const [playing, setPlaying] = useState(false);
@@ -219,7 +222,7 @@ export function StoryFlow({
             {displayStep === 1 && <StepThi />}
             {displayStep === 2 && <StepMemories />}
             {displayStep === 3 && <StepChanTam />}
-            {displayStep === 4 && <WishWall />}
+            {displayStep === 4 && <WishWall initialFireWishes={fireWishes} />}
           </div>
 
           {displayStep < 4 ? (

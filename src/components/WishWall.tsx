@@ -5,18 +5,23 @@ import { useEffect, useState } from "react";
 import { wishes as staticWishes, type Wish } from "@/data/wishes";
 import { WishCard } from "./WishCard";
 
-export function WishWall() {
-  const [fireWishes, setFireWishes] = useState<Wish[]>([]);
-  const [fetchingExtra, setFetchingExtra] = useState(true);
+export function WishWall({
+  initialFireWishes = [],
+}: {
+  initialFireWishes?: Wish[];
+}) {
+  const [fireWishes, setFireWishes] = useState<Wish[]>(initialFireWishes);
 
   useEffect(() => {
     let unsub: (() => void) | undefined;
-    const timeout = window.setTimeout(() => setFetchingExtra(false), 3000);
 
     import("@/lib/firebase")
       .then(({ db }) => import("firebase/firestore").then((fs) => ({ db, fs })))
       .then(({ db, fs }) => {
-        const q = fs.query(fs.collection(db, "wishes"), fs.orderBy("createdAt", "desc"));
+        const q = fs.query(
+          fs.collection(db, "wishes"),
+          fs.orderBy("createdAt", "desc")
+        );
         unsub = fs.onSnapshot(
           q,
           (snap) => {
@@ -26,17 +31,17 @@ export function WishWall() {
                 ...(d.data() as Omit<Wish, "id">),
               }))
             );
-            setFetchingExtra(false);
           },
-          () => setFetchingExtra(false)
+          () => {
+            /* keep server-rendered wishes if live listener fails */
+          }
         );
       })
-      .catch(() => setFetchingExtra(false));
+      .catch(() => {
+        /* iOS / Messenger: HTML already has Firestore wishes from the server */
+      });
 
-    return () => {
-      window.clearTimeout(timeout);
-      unsub?.();
-    };
+    return () => unsub?.();
   }, []);
 
   const allWishes: Wish[] = [...fireWishes, ...staticWishes];
@@ -65,12 +70,6 @@ export function WishWall() {
           <WishCard key={wish.id} wish={wish} index={index} />
         ))}
       </div>
-
-      {fetchingExtra ? (
-        <p className="mt-6 text-center text-xs text-navy/35">
-          Đang lấy thêm lời chúc mới...
-        </p>
-      ) : null}
     </section>
   );
 }
