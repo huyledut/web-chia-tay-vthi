@@ -1,9 +1,20 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { WishWall } from "./WishWall";
+
+const WishWall = dynamic(
+  () => import("./WishWall").then((m) => m.WishWall),
+  {
+    ssr: false,
+    loading: () => (
+      <p className="py-10 text-center text-sm text-navy/40">
+        Đang lấy lời chúc về...
+      </p>
+    ),
+  }
+);
 
 /* ── data ─────────────────────────────────────────────── */
 const MEMORY_PHOTOS = [
@@ -17,7 +28,7 @@ const MEMORY_PHOTOS = [
   { src: "/photos/09-ao-dai.png",        tilt: "2deg",    tall: true  },
 ] as const;
 
-const CONFETTI_POOL = ["🌸", "💗", "✨", "🎀", "💌", "🌷", "⭐", "🍀", "🩷", "🌺"];
+const CONFETTI_POOL = ["🌸", "💗", "✨", "🎀", "💌", "🌷", "⭐", "🍀", "🌺"];
 
 const NEXT_LABELS: Record<number, string> = {
   1: "Cùng tua lại những khoảnh khắc nhé 🌸",
@@ -42,7 +53,6 @@ function spawnConfetti() {
     const el = document.createElement("span");
     el.textContent = CONFETTI_POOL[Math.floor(Math.random() * CONFETTI_POOL.length)];
     const size  = 14 + Math.random() * 22;
-    const rot   = (Math.random() > 0.5 ? 1 : -1) * (180 + Math.random() * 420);
     const delay = Math.random() * 550;
     const dur   = 1200 + Math.random() * 900;
     el.style.cssText = `
@@ -50,7 +60,6 @@ function spawnConfetti() {
       font-size:${size}px;
       left:${Math.random() * 100}%;
       top:-50px;
-      --rot:${rot}deg;
       animation:confetti-fall ${dur}ms ${delay}ms ease-in both;
     `;
     host.appendChild(el);
@@ -59,11 +68,99 @@ function spawnConfetti() {
   setTimeout(() => host.remove(), 3200);
 }
 
-/* ── main component ───────────────────────────────────── */
-export function StoryFlow() {
-  const searchParams = useSearchParams();
-  const cameFromForm = searchParams.get("gui") === "ok";
+function EnvelopeButton({
+  isOpening,
+  onOpen,
+}: {
+  isOpening: boolean;
+  onOpen: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      disabled={isOpening}
+      className="relative w-[90vw] max-w-75 touch-manipulation focus:outline-none sm:max-w-105 lg:max-w-145"
+      style={{ WebkitTapHighlightColor: "transparent" }}
+      aria-label="Mở thư"
+    >
+      <span className="block w-full" style={{ paddingBottom: "73.33%" }} />
 
+      <span className="absolute inset-0 overflow-hidden rounded-[26px]">
+        <span
+          className="absolute inset-0 rounded-[26px]"
+          style={{
+            background: "linear-gradient(145deg,#fde8c8,#f5c49a)",
+            boxShadow:
+              "0 20px 60px rgba(200,120,80,0.25),0 4px 16px rgba(200,120,80,0.15)",
+          }}
+        />
+
+        <span
+          className="absolute left-[6%] right-[6%] rounded-xl bg-white text-left shadow-md"
+          style={{
+            bottom: "14%",
+            padding: "5% 6%",
+            zIndex: 2,
+            transform: isOpening ? "translateY(-46%)" : "translateY(0)",
+            transition: "transform 0.95s 0.15s ease",
+          }}
+        >
+          <span className="block font-script text-[1.15rem] text-plum sm:text-2xl">
+            Gửi Việt Thi 🌸
+          </span>
+          <span className="mt-1 block text-[0.7rem] leading-5 text-navy/60 sm:text-sm">
+            Từ Học Chúng Chánh Tâm · Tự Viện Phước Duyên · Huế
+          </span>
+        </span>
+
+        <svg
+          className="pointer-events-none absolute inset-0 h-full w-full"
+          viewBox="0 0 300 220"
+          preserveAspectRatio="none"
+          aria-hidden
+          style={{ zIndex: 3 }}
+        >
+          <polygon points="0,0 0,220 150,121" fill="#edb880" />
+          <polygon points="300,0 300,220 150,121" fill="#e8a56c" />
+          <polygon points="0,220 150,105 300,220" fill="#e09060" />
+        </svg>
+
+        <svg
+          className="pointer-events-none absolute left-0 top-0 w-full"
+          viewBox="0 0 300 121"
+          preserveAspectRatio="none"
+          aria-hidden
+          style={{
+            height: "55%",
+            zIndex: 4,
+            transform: isOpening ? "translateY(-115%)" : "translateY(0)",
+            opacity: isOpening ? 0 : 1,
+            transition: "transform 0.9s ease, opacity 0.7s ease",
+          }}
+        >
+          <polygon points="0,0 300,0 150,121" fill="#e09060" />
+          <polygon points="0,0 300,0 150,108" fill="#f5c07a" />
+        </svg>
+
+        <span
+          className="pointer-events-none absolute left-1/2 z-10 -translate-x-1/2 text-3xl drop-shadow-sm"
+          style={{
+            top: "28%",
+            opacity: isOpening ? 0 : 1,
+            transition: "opacity 0.35s ease",
+          }}
+          aria-hidden
+        >
+          💗
+        </span>
+      </span>
+    </button>
+  );
+}
+
+/* ── main component ───────────────────────────────────── */
+export function StoryFlow({ cameFromForm = false }: { cameFromForm?: boolean }) {
   const [displayStep, setDisplayStep] = useState(cameFromForm ? 4 : 0);
   const [isExiting,   setIsExiting]   = useState(false);
   const [isOpening,   setIsOpening]   = useState(false);
@@ -136,15 +233,14 @@ export function StoryFlow() {
 
   return (
     <>
-      <audio ref={audioRef} src="/audio/nhac-chia-tay.mp3" loop preload="auto" />
+      <audio ref={audioRef} src="/audio/nhac-chia-tay.mp3" loop preload="none" />
 
-      {/* ══ STEP 0 – fullscreen envelope overlay ══════════════ */}
+      {/* ══ STEP 0 – fullscreen envelope ══════════════ */}
       {displayStep === 0 ? (
         <div
-          className="fixed inset-0 z-30 flex flex-col items-center justify-center overflow-hidden px-4"
+          className="relative z-30 flex min-h-screen flex-col items-center justify-center overflow-hidden px-4"
           style={{ background: "linear-gradient(160deg,#fff0f8 0%,#f3effe 55%,#e8f6ff 100%)" }}
         >
-          {/* ambient petals */}
           {(["🌸", "💗", "✨", "💌", "☁️", "🌷"] as const).map((e, i) => (
             <span
               key={i}
@@ -164,76 +260,7 @@ export function StoryFlow() {
             Thi ơi, có thư này gửi cho cậu nè 💌
           </p>
 
-          {/* envelope button — responsive: grows on wider screens */}
-          <button
-            type="button"
-            onClick={openEnvelope}
-            disabled={isOpening}
-            className="group relative w-[min(90vw,300px)] focus:outline-none sm:w-105 lg:w-145"
-            style={{ aspectRatio: "300/220", perspective: "1400px" }}
-          >
-            {/* body */}
-            <div
-              className="absolute inset-0 rounded-[1.6rem] transition-shadow group-hover:shadow-[0_32px_80px_rgba(200,120,80,0.4)]"
-              style={{
-                background: "linear-gradient(145deg,#fde8c8,#f5c49a)",
-                boxShadow: "0 20px 60px rgba(200,120,80,0.25),0 4px 16px rgba(200,120,80,0.15)",
-              }}
-            />
-            {/* interior folds */}
-            <div
-              className="absolute inset-0 rounded-[1.6rem]"
-              style={{
-                clipPath: "polygon(0 0,0 100%,50% 55%)",
-                background: "linear-gradient(160deg,#f9d4a8,#edb880)",
-              }}
-            />
-            <div
-              className="absolute inset-0 rounded-[1.6rem]"
-              style={{
-                clipPath: "polygon(100% 0,100% 100%,50% 55%)",
-                background: "linear-gradient(200deg,#f9d4a8,#edb880)",
-              }}
-            />
-            <div
-              className="absolute inset-0 rounded-b-[1.6rem]"
-              style={{
-                clipPath: "polygon(0 100%,50% 48%,100% 100%)",
-                background: "linear-gradient(170deg,#f0c080,#e09060)",
-              }}
-            />
-            {/* letter (slides up on opening) */}
-            <div
-              className="absolute left-[3%] right-[3%] rounded-xl bg-white/95 shadow-md"
-              style={{
-                bottom: "5%",
-                padding: "4% 6%",
-                zIndex: 5,
-                transform: isOpening ? "translateY(-58%)" : "translateY(0)",
-                transition: "transform 0.95s 0.35s cubic-bezier(0.2,0.95,0.3,1)",
-              }}
-            >
-              <p className="font-script text-[clamp(1rem,3vw,1.6rem)] text-plum">
-                Gửi Việt Thi 🌸
-              </p>
-              <p className="mt-1 text-[clamp(0.65rem,1.5vw,0.9rem)] leading-5 text-navy/60">
-                Từ Học Chúng Chánh Tâm · Tự Viện Phước Duyên · Huế
-              </p>
-            </div>
-            {/* flap */}
-            <div
-              className="absolute left-0 right-0 top-0 rounded-t-[1.6rem]"
-              style={{
-                height: "55%",
-                clipPath: "polygon(0 0,100% 0,50% 100%)",
-                background: "linear-gradient(160deg,#f5c07a,#e09060)",
-                transformOrigin: "top center",
-                transform: isOpening ? "rotateX(-176deg)" : "rotateX(0deg)",
-                transition: "transform 1.1s cubic-bezier(0.2,0.8,0.2,1)",
-                zIndex: 10,
-              }}
-            />
-          </button>
+          <EnvelopeButton isOpening={isOpening} onOpen={openEnvelope} />
 
           <p className="mt-6 animate-pulse text-sm text-navy/55 lg:mt-10 lg:text-base">
             {isOpening ? "Thư đang mở ra rồi nè..." : "Bấm vào để mở nha 🤍"}
@@ -315,7 +342,7 @@ export function StoryFlow() {
           <button
             type="button"
             onClick={toggleMusic}
-            className={`flex h-14 w-14 items-center justify-center rounded-full bg-white/95 text-2xl shadow-xl ring-2 ring-rose/30 backdrop-blur-sm transition hover:-translate-y-0.5 ${
+            className={`flex h-14 w-14 items-center justify-center rounded-full bg-white text-2xl shadow-xl ring-2 ring-rose/30 transition hover:-translate-y-0.5 ${
               playing ? "music-pulse" : ""
             }`}
             aria-label={playing ? "Tắt nhạc" : "Bật nhạc"}
@@ -335,7 +362,7 @@ function StepThi() {
       {/* photo with sticker overlays */}
       <div className="relative mx-auto shrink-0">
         {/* glow blob */}
-        <div className="absolute -inset-8 rounded-full bg-linear-to-br from-rose/20 to-petal/25 blur-3xl" />
+        <div className="absolute -inset-8 rounded-full bg-rose/20" />
         <div className="relative float-slow">
           <div className="relative h-80 w-60 overflow-hidden rounded-4xl border-[7px] border-white shadow-[0_16px_48px_rgba(249,168,201,0.4)] md:h-85 md:w-64">
             <Image
