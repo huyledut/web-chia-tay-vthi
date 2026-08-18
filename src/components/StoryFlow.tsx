@@ -1,21 +1,11 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+/* Native <a href="/?buoc=…"> is required: Next <Link> intercepts clicks and breaks older iOS. */
+/* eslint-disable @next/next/no-html-link-for-pages */
 
-const WishWall = dynamic(
-  () => import("./WishWall").then((m) => m.WishWall),
-  {
-    ssr: false,
-    loading: () => (
-      <p className="py-10 text-center text-sm text-navy/40">
-        Đang lấy lời chúc về...
-      </p>
-    ),
-  }
-);
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { WishWall } from "./WishWall";
 
 /* ── data ─────────────────────────────────────────────── */
 const MEMORY_PHOTOS = [
@@ -29,50 +19,18 @@ const MEMORY_PHOTOS = [
   { src: "/photos/09-ao-dai.png",        tilt: "2deg",    tall: true  },
 ] as const;
 
-const CONFETTI_POOL = ["🌸", "💗", "✨", "🎀", "💌", "🌷", "⭐", "🍀", "🌺"];
-
 const NEXT_LABELS: Record<number, string> = {
   1: "Cùng tua lại những khoảnh khắc nhé 🌸",
   2: "Chánh Tâm mãi là nhà 🏡",
   3: "Mọi người có đôi lời gửi đến Thi iu dấu nè 💌",
 };
 
-/* exit/enter CSS class map */
-const EXIT:  Record<number, string> = { 1: "exit-1", 2: "exit-2", 3: "exit-3" };
 const ENTER: Record<number, string> = { 1: "enter-1", 2: "enter-2", 3: "enter-3", 4: "enter-4" };
 
-/* ── helpers ─────────────────────────────────────────── */
-function sleep(ms: number) {
-  return new Promise<void>((r) => setTimeout(r, ms));
-}
-
-function spawnConfetti() {
-  const host = document.createElement("div");
-  host.style.cssText =
-    "position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden";
-  for (let i = 0; i < 24; i++) {
-    const el = document.createElement("span");
-    el.textContent = CONFETTI_POOL[Math.floor(Math.random() * CONFETTI_POOL.length)];
-    const size  = 14 + Math.random() * 22;
-    const delay = Math.random() * 550;
-    const dur   = 1200 + Math.random() * 900;
-    el.style.cssText = `
-      position:absolute;
-      font-size:${size}px;
-      left:${Math.random() * 100}%;
-      top:-50px;
-      animation:confetti-fall ${dur}ms ${delay}ms ease-in both;
-    `;
-    host.appendChild(el);
-  }
-  document.body.appendChild(host);
-  setTimeout(() => host.remove(), 3200);
-}
-
-function EnvelopeVisual({ isOpening }: { isOpening: boolean }) {
+function EnvelopeVisual() {
   return (
     <span
-      className="relative block w-[90vw] max-w-75 sm:max-w-105 lg:max-w-145"
+      className="pointer-events-none relative block w-[90vw] max-w-75 sm:max-w-105 lg:max-w-145"
       aria-hidden
     >
       <span className="block w-full" style={{ paddingBottom: "73.33%" }} />
@@ -93,7 +51,7 @@ function EnvelopeVisual({ isOpening }: { isOpening: boolean }) {
             bottom: "14%",
             padding: "5% 6%",
             zIndex: 2,
-            transform: isOpening ? "translateY(-46%)" : "translateY(0)",
+            transform: "translateY(0)",
             transition: "transform 0.95s 0.15s ease",
           }}
         >
@@ -125,8 +83,8 @@ function EnvelopeVisual({ isOpening }: { isOpening: boolean }) {
           style={{
             height: "55%",
             zIndex: 4,
-            transform: isOpening ? "translateY(-115%)" : "translateY(0)",
-            opacity: isOpening ? 0 : 1,
+            transform: "translateY(0)",
+            opacity: 1,
             transition: "transform 0.9s ease, opacity 0.7s ease",
           }}
         >
@@ -138,7 +96,7 @@ function EnvelopeVisual({ isOpening }: { isOpening: boolean }) {
           className="pointer-events-none absolute left-1/2 z-10 -translate-x-1/2 text-3xl drop-shadow-sm"
           style={{
             top: "28%",
-            opacity: isOpening ? 0 : 1,
+            opacity: 1,
             transition: "opacity 0.35s ease",
           }}
           aria-hidden
@@ -158,31 +116,17 @@ export function StoryFlow({
   cameFromForm?: boolean;
   initialStep?: number;
 }) {
-  const [displayStep, setDisplayStep] = useState(cameFromForm ? 4 : initialStep);
-  const [isExiting,   setIsExiting]   = useState(false);
-  const [isOpening,   setIsOpening]   = useState(false);
-  const [playing,     setPlaying]     = useState(false);
-  const [btnVisible,  setBtnVisible]  = useState(initialStep > 0 && initialStep < 4);
-  const [toast,       setToast]       = useState(cameFromForm);
+  const displayStep = cameFromForm ? 4 : initialStep;
+  const [playing, setPlaying] = useState(false);
+  const [toast, setToast] = useState(cameFromForm);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-  const audioRef    = useRef<HTMLAudioElement>(null);
-  const btnTimerRef = useRef<number | null>(null);
-
-  /* delayed "next" button reveal after entering a step */
-  useEffect(() => {
-    if (displayStep === 0 || displayStep === 4) return;
-    btnTimerRef.current = window.setTimeout(() => setBtnVisible(true), 1800);
-    return () => { if (btnTimerRef.current) clearTimeout(btnTimerRef.current); };
-  }, [displayStep]);
-
-  /* auto-dismiss toast after 4 s */
   useEffect(() => {
     if (!toast) return;
     const t = window.setTimeout(() => setToast(false), 4000);
-    return () => clearTimeout(t);
+    return () => window.clearTimeout(t);
   }, [toast]);
 
-  /* music — never await play(); iOS can hang that promise forever */
   function playMusic() {
     const a = audioRef.current;
     if (!a) return;
@@ -191,11 +135,15 @@ export function StoryFlow({
     } catch {
       /* older WebKit */
     }
-    const maybe = a.play();
-    if (maybe && typeof maybe.then === "function") {
-      maybe.then(() => setPlaying(true)).catch(() => setPlaying(false));
-    } else {
-      setPlaying(true);
+    try {
+      const maybe = a.play();
+      if (maybe && typeof maybe.then === "function") {
+        maybe.then(() => setPlaying(true)).catch(() => setPlaying(false));
+      } else {
+        setPlaying(true);
+      }
+    } catch {
+      setPlaying(false);
     }
   }
 
@@ -210,52 +158,13 @@ export function StoryFlow({
     }
   }
 
-  /* open envelope → step 1 */
-  async function openEnvelope() {
-    if (isOpening) return;
-    setIsOpening(true);
-    setBtnVisible(false);
-    playMusic();
-    try {
-      await sleep(900);
-      spawnConfetti();
-      await sleep(280);
-    } catch {
-      /* ignore animation errors — still go to next step */
-    }
-    setDisplayStep(1);
-    setIsOpening(false);
-  }
-
-  /* go to next step with exit → enter transition */
-  async function goNext() {
-    if (isExiting || displayStep >= 4) return;
-    setBtnVisible(false);
-    spawnConfetti();
-    setIsExiting(true);
-    await sleep(450);
-    setDisplayStep((s) => s + 1);
-    setIsExiting(false);
-  }
-
-  function goPrev() {
-    if (isExiting || displayStep <= 1) return;
-    setBtnVisible(false);
-    setDisplayStep((s) => s - 1);
-  }
-
   return (
     <>
       <audio ref={audioRef} src="/audio/nhac-chia-tay.mp3" loop preload="none" />
 
-      {/* ══ STEP 0 – fullscreen envelope ══════════════ */}
       {displayStep === 0 ? (
-        <Link
+        <a
           href="/?buoc=1"
-          onClick={(e) => {
-            e.preventDefault();
-            void openEnvelope();
-          }}
           className="relative z-30 flex min-h-screen touch-manipulation flex-col items-center justify-center overflow-hidden px-4 no-underline"
           style={{
             background: "linear-gradient(160deg,#fff0f8 0%,#f3effe 55%,#e8f6ff 100%)",
@@ -281,18 +190,16 @@ export function StoryFlow({
             Thi ơi, có thư này gửi cho cậu nè 💌
           </p>
 
-          <EnvelopeVisual isOpening={isOpening} />
+          <EnvelopeVisual />
 
           <p className="mt-6 animate-pulse text-sm text-navy/55 lg:mt-10 lg:text-base">
-            {isOpening ? "Thư đang mở ra rồi nè..." : "Bấm vào để mở nha 🤍"}
+            Bấm vào để mở nha 🤍
           </p>
-        </Link>
+        </a>
       ) : null}
 
-      {/* ══ STEPS 1-4 ══════════════════════════════════════════ */}
       {displayStep > 0 ? (
         <div className="mx-auto w-full max-w-5xl px-4 pb-28 pt-8 sm:px-6 md:px-8">
-          {/* step progress dots */}
           <div className="mb-10 flex justify-center gap-2">
             {[1, 2, 3, 4].map((s) => (
               <div
@@ -308,48 +215,29 @@ export function StoryFlow({
             ))}
           </div>
 
-          {/* step content — key change triggers enter animation */}
-          <div
-            key={displayStep}
-            className={isExiting ? (EXIT[displayStep] ?? "") : (ENTER[displayStep] ?? "")}
-          >
+          <div key={displayStep} className={ENTER[displayStep] ?? ""}>
             {displayStep === 1 && <StepThi />}
             {displayStep === 2 && <StepMemories />}
             {displayStep === 3 && <StepChanTam />}
             {displayStep === 4 && <WishWall />}
           </div>
 
-          {/* nav buttons (appear with delay) */}
           {displayStep < 4 ? (
-            <div
-              className={`mt-10 flex items-center justify-center gap-3 transition-all duration-700 ${
-                btnVisible
-                  ? "pointer-events-auto translate-y-0 opacity-100"
-                  : "pointer-events-none translate-y-6 opacity-0"
-              }`}
-            >
+            <div className="mt-10 flex items-center justify-center gap-3">
               {displayStep > 1 ? (
-                <Link
+                <a
                   href={`/?buoc=${displayStep - 1}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    goPrev();
-                  }}
                   className="rounded-full border-2 border-rose/40 px-5 py-2.5 text-sm font-semibold text-rose/80 no-underline transition hover:border-rose hover:text-rose"
                 >
                   ← Quay lại
-                </Link>
+                </a>
               ) : null}
-              <Link
+              <a
                 href={`/?buoc=${displayStep + 1}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  void goNext();
-                }}
                 className="rounded-full bg-linear-to-r from-rose to-petal px-7 py-3 text-sm font-bold text-white no-underline shadow-[0_4px_20px_rgba(249,168,201,0.45)] transition hover:scale-105 hover:shadow-[0_6px_30px_rgba(249,168,201,0.65)]"
               >
                 {NEXT_LABELS[displayStep]}
-              </Link>
+              </a>
             </div>
           ) : null}
         </div>

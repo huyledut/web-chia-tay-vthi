@@ -2,45 +2,41 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-  collection,
-  onSnapshot,
-  orderBy,
-  query,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { wishes as staticWishes, type Wish } from "@/data/wishes";
 import { WishCard } from "./WishCard";
 
-type FireWish = Wish & { createdAt?: { seconds: number } };
-
 export function WishWall() {
-  const [fireWishes, setFireWishes] = useState<FireWish[]>([]);
-  const [loading,    setLoading]    = useState(true);
+  const [fireWishes, setFireWishes] = useState<Wish[]>([]);
+  const [fetchingExtra, setFetchingExtra] = useState(true);
 
   useEffect(() => {
-    const q = query(
-      collection(db, "wishes"),
-      orderBy("createdAt", "desc")
-    );
+    let unsub: (() => void) | undefined;
+    const timeout = window.setTimeout(() => setFetchingExtra(false), 3000);
 
-    const unsub = onSnapshot(
-      q,
-      (snap) => {
-        const docs = snap.docs.map((d) => ({
-          id: d.id,
-          ...(d.data() as Omit<FireWish, "id">),
-        }));
-        setFireWishes(docs);
-        setLoading(false);
-      },
-      () => {
-        /* ignore permission errors in dev before rules are set */
-        setLoading(false);
-      }
-    );
+    import("@/lib/firebase")
+      .then(({ db }) => import("firebase/firestore").then((fs) => ({ db, fs })))
+      .then(({ db, fs }) => {
+        const q = fs.query(fs.collection(db, "wishes"), fs.orderBy("createdAt", "desc"));
+        unsub = fs.onSnapshot(
+          q,
+          (snap) => {
+            setFireWishes(
+              snap.docs.map((d) => ({
+                id: d.id,
+                ...(d.data() as Omit<Wish, "id">),
+              }))
+            );
+            setFetchingExtra(false);
+          },
+          () => setFetchingExtra(false)
+        );
+      })
+      .catch(() => setFetchingExtra(false));
 
-    return unsub;
+    return () => {
+      window.clearTimeout(timeout);
+      unsub?.();
+    };
   }, []);
 
   const allWishes: Wish[] = [...fireWishes, ...staticWishes];
@@ -56,7 +52,6 @@ export function WishWall() {
           Mọi người đã nhắn gửi những điều thương yêu nhất cho cậu trước ngày lên đường ✈️
         </p>
 
-        {/* CTA */}
         <Link
           href="/gui-loi-chuc"
           className="mt-5 inline-flex items-center gap-2 rounded-full bg-linear-to-r from-rose to-petal px-6 py-2.5 text-sm font-bold text-white shadow-[0_4px_20px_rgba(249,168,201,0.4)] transition hover:scale-105"
@@ -65,17 +60,17 @@ export function WishWall() {
         </Link>
       </div>
 
-      {loading ? (
-        <div className="py-10 text-center text-sm text-navy/40 animate-pulse">
-          Đang lấy lời chúc về...
-        </div>
-      ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {allWishes.map((wish, index) => (
-            <WishCard key={wish.id} wish={wish} index={index} />
-          ))}
-        </div>
-      )}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {allWishes.map((wish, index) => (
+          <WishCard key={wish.id} wish={wish} index={index} />
+        ))}
+      </div>
+
+      {fetchingExtra ? (
+        <p className="mt-6 text-center text-xs text-navy/35">
+          Đang lấy thêm lời chúc mới...
+        </p>
+      ) : null}
     </section>
   );
 }

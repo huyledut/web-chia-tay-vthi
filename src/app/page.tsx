@@ -1,5 +1,7 @@
 import { StoryFlow } from "@/components/StoryFlow";
 
+export const dynamic = "force-dynamic";
+
 function first(value?: string | string[]) {
   return Array.isArray(value) ? value[0] : value;
 }
