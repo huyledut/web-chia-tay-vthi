@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-blush:  #fff0f8;
+  --color-rose:   #f9a8c9;
+  --color-petal:  #fbc6d8;
+  --color-sky:    #c8e6f5;
+  --color-mint:   #c2f0e8;
+  --color-lemon:  #fef3c7;
+  --color-cream:  #fffaf5;
+  --color-peach:  #ffd8c2;
+  --color-lilac:  #ead7f5;
+  --color-navy:   #3b2f4a;
+  --color-plum:   #7c5c8a;
+  --font-sans:    var(--font-nunito);
+  --font-script:  var(--font-mali);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: linear-gradient(160deg, #fff0f8 0%, #f3effe 50%, #e8f6ff 100%);
+  color: var(--color-navy);
+}
+
+/* ── floating decor ──────────────────────────────────── */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-14px); }
+}
+@keyframes drift {
+  0%   { transform: translateY(0) rotate(0deg);    opacity: 0.2; }
+  50%  {                                            opacity: 0.5; }
+  100% { transform: translateY(-110vh) rotate(22deg); opacity: 0; }
+}
+.float-slow { animation: float-y 4.5s ease-in-out infinite; }
+.drift      { animation: drift linear infinite; }
+
+/* ── music pulse ─────────────────────────────────────── */
+@keyframes music-pulse {
+  0%, 100% { box-shadow: 0 0 0 0   rgb(249 168 201 / 0.5); }
+  70%      { box-shadow: 0 0 0 14px rgb(249 168 201 / 0);   }
+}
+.music-pulse { animation: music-pulse 1.8s ease-out infinite; }
+
+/* ── step ENTER animations ───────────────────────────── */
+@keyframes enter-pop {
+  0%   { opacity: 0; transform: scale(0.86) translateY(20px); }
+  65%  {             transform: scale(1.03)  translateY(-6px); }
+  100% { opacity: 1; transform: scale(1)    translateY(0); }
+}
+@keyframes enter-fall {
+  from { opacity: 0; transform: translateY(-30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes enter-bloom {
+  0%   { opacity: 0; transform: scale(0.8); filter: blur(8px); }
+  100% { opacity: 1; transform: scale(1);   filter: blur(0);   }
+}
+@keyframes enter-slide-up {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.enter-1 { animation: enter-pop      640ms cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+.enter-2 { animation: enter-fall     520ms ease-out both; }
+.enter-3 { animation: enter-bloom    700ms ease-out both; }
+.enter-4 { animation: enter-slide-up 540ms ease-out both; }
+
+/* ── step EXIT animations ────────────────────────────── */
+@keyframes exit-shrink {
+  to { transform: scale(0.72) translateY(24px); opacity: 0; filter: blur(3px); }
+}
+@keyframes exit-scatter {
+  to { transform: translateY(-56px) scale(0.9); opacity: 0; filter: blur(4px); }
+}
+@keyframes exit-fade-down {
+  to { transform: translateY(28px); opacity: 0; }
+}
+
+.exit-1 { animation: exit-shrink    440ms ease-in both; }
+.exit-2 { animation: exit-scatter   440ms ease-in both; }
+.exit-3 { animation: exit-fade-down 400ms ease-in both; }
+
+/* ── polaroid bounce-in ──────────────────────────────── */
+@keyframes polaroid-in {
+  0%   { opacity: 0; transform: translateY(-44px) rotate(calc(var(--tilt,0deg) * -2.5)) scale(0.82); }
+  62%  {             transform: translateY(7px)   rotate(calc(var(--tilt,0deg) * 0.55)) scale(1.04); }
+  82%  {             transform: translateY(-4px)  rotate(calc(var(--tilt,0deg) * 0.9));              }
+  100% { opacity: 1; transform: translateY(0)    rotate(var(--tilt, 0deg)) scale(1);                 }
+}
+.polaroid-card { animation: polaroid-in 680ms cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+
+/* ── confetti fall ───────────────────────────────────── */
+@keyframes confetti-fall {
+  0%   { opacity: 1; transform: translateY(-24px) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(108vh) rotate(var(--rot, 540deg)); }
+}
