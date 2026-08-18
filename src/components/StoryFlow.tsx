@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 
@@ -68,21 +69,11 @@ function spawnConfetti() {
   setTimeout(() => host.remove(), 3200);
 }
 
-function EnvelopeButton({
-  isOpening,
-  onOpen,
-}: {
-  isOpening: boolean;
-  onOpen: () => void;
-}) {
+function EnvelopeVisual({ isOpening }: { isOpening: boolean }) {
   return (
-    <button
-      type="button"
-      onClick={onOpen}
-      disabled={isOpening}
-      className="relative w-[90vw] max-w-75 touch-manipulation focus:outline-none sm:max-w-105 lg:max-w-145"
-      style={{ WebkitTapHighlightColor: "transparent" }}
-      aria-label="Mở thư"
+    <span
+      className="relative block w-[90vw] max-w-75 sm:max-w-105 lg:max-w-145"
+      aria-hidden
     >
       <span className="block w-full" style={{ paddingBottom: "73.33%" }} />
 
@@ -155,17 +146,23 @@ function EnvelopeButton({
           💗
         </span>
       </span>
-    </button>
+    </span>
   );
 }
 
 /* ── main component ───────────────────────────────────── */
-export function StoryFlow({ cameFromForm = false }: { cameFromForm?: boolean }) {
-  const [displayStep, setDisplayStep] = useState(cameFromForm ? 4 : 0);
+export function StoryFlow({
+  cameFromForm = false,
+  initialStep = 0,
+}: {
+  cameFromForm?: boolean;
+  initialStep?: number;
+}) {
+  const [displayStep, setDisplayStep] = useState(cameFromForm ? 4 : initialStep);
   const [isExiting,   setIsExiting]   = useState(false);
   const [isOpening,   setIsOpening]   = useState(false);
   const [playing,     setPlaying]     = useState(false);
-  const [btnVisible,  setBtnVisible]  = useState(false);
+  const [btnVisible,  setBtnVisible]  = useState(initialStep > 0 && initialStep < 4);
   const [toast,       setToast]       = useState(cameFromForm);
 
   const audioRef    = useRef<HTMLAudioElement>(null);
@@ -185,20 +182,32 @@ export function StoryFlow({ cameFromForm = false }: { cameFromForm?: boolean }) 
     return () => clearTimeout(t);
   }, [toast]);
 
-  /* music */
-  async function playMusic() {
+  /* music — never await play(); iOS can hang that promise forever */
+  function playMusic() {
     const a = audioRef.current;
     if (!a) return;
-    a.volume = 0.38;
-    try { await a.play(); setPlaying(true); }
-    catch { setPlaying(false); }
+    try {
+      a.volume = 0.38;
+    } catch {
+      /* older WebKit */
+    }
+    const maybe = a.play();
+    if (maybe && typeof maybe.then === "function") {
+      maybe.then(() => setPlaying(true)).catch(() => setPlaying(false));
+    } else {
+      setPlaying(true);
+    }
   }
 
-  async function toggleMusic() {
+  function toggleMusic() {
     const a = audioRef.current;
     if (!a) return;
-    if (playing) { a.pause(); setPlaying(false); }
-    else await playMusic();
+    if (playing) {
+      a.pause();
+      setPlaying(false);
+    } else {
+      playMusic();
+    }
   }
 
   /* open envelope → step 1 */
@@ -206,10 +215,14 @@ export function StoryFlow({ cameFromForm = false }: { cameFromForm?: boolean }) 
     if (isOpening) return;
     setIsOpening(true);
     setBtnVisible(false);
-    await playMusic();
-    await sleep(1300); /* flap animation */
-    spawnConfetti();
-    await sleep(380);
+    playMusic();
+    try {
+      await sleep(900);
+      spawnConfetti();
+      await sleep(280);
+    } catch {
+      /* ignore animation errors — still go to next step */
+    }
     setDisplayStep(1);
     setIsOpening(false);
   }
@@ -237,9 +250,17 @@ export function StoryFlow({ cameFromForm = false }: { cameFromForm?: boolean }) 
 
       {/* ══ STEP 0 – fullscreen envelope ══════════════ */}
       {displayStep === 0 ? (
-        <div
-          className="relative z-30 flex min-h-screen flex-col items-center justify-center overflow-hidden px-4"
-          style={{ background: "linear-gradient(160deg,#fff0f8 0%,#f3effe 55%,#e8f6ff 100%)" }}
+        <Link
+          href="/?buoc=1"
+          onClick={(e) => {
+            e.preventDefault();
+            void openEnvelope();
+          }}
+          className="relative z-30 flex min-h-screen touch-manipulation flex-col items-center justify-center overflow-hidden px-4 no-underline"
+          style={{
+            background: "linear-gradient(160deg,#fff0f8 0%,#f3effe 55%,#e8f6ff 100%)",
+            WebkitTapHighlightColor: "transparent",
+          }}
         >
           {(["🌸", "💗", "✨", "💌", "☁️", "🌷"] as const).map((e, i) => (
             <span
@@ -260,12 +281,12 @@ export function StoryFlow({ cameFromForm = false }: { cameFromForm?: boolean }) 
             Thi ơi, có thư này gửi cho cậu nè 💌
           </p>
 
-          <EnvelopeButton isOpening={isOpening} onOpen={openEnvelope} />
+          <EnvelopeVisual isOpening={isOpening} />
 
           <p className="mt-6 animate-pulse text-sm text-navy/55 lg:mt-10 lg:text-base">
             {isOpening ? "Thư đang mở ra rồi nè..." : "Bấm vào để mở nha 🤍"}
           </p>
-        </div>
+        </Link>
       ) : null}
 
       {/* ══ STEPS 1-4 ══════════════════════════════════════════ */}
@@ -308,22 +329,27 @@ export function StoryFlow({ cameFromForm = false }: { cameFromForm?: boolean }) 
               }`}
             >
               {displayStep > 1 ? (
-                <button
-                  type="button"
-                  onClick={goPrev}
-                  className="rounded-full border-2 border-rose/40 px-5 py-2.5 text-sm font-semibold text-rose/80 transition hover:border-rose hover:text-rose"
+                <Link
+                  href={`/?buoc=${displayStep - 1}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goPrev();
+                  }}
+                  className="rounded-full border-2 border-rose/40 px-5 py-2.5 text-sm font-semibold text-rose/80 no-underline transition hover:border-rose hover:text-rose"
                 >
                   ← Quay lại
-                </button>
+                </Link>
               ) : null}
-              <button
-                type="button"
-                onClick={goNext}
-                disabled={isExiting}
-                className="rounded-full bg-linear-to-r from-rose to-petal px-7 py-3 text-sm font-bold text-white shadow-[0_4px_20px_rgba(249,168,201,0.45)] transition hover:scale-105 hover:shadow-[0_6px_30px_rgba(249,168,201,0.65)] disabled:cursor-not-allowed disabled:opacity-60"
+              <Link
+                href={`/?buoc=${displayStep + 1}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  void goNext();
+                }}
+                className="rounded-full bg-linear-to-r from-rose to-petal px-7 py-3 text-sm font-bold text-white no-underline shadow-[0_4px_20px_rgba(249,168,201,0.45)] transition hover:scale-105 hover:shadow-[0_6px_30px_rgba(249,168,201,0.65)]"
               >
                 {NEXT_LABELS[displayStep]}
-              </button>
+              </Link>
             </div>
           ) : null}
         </div>
