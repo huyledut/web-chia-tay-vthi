@@ -22,7 +22,7 @@ const CONFETTI_POOL = ["🌸", "💗", "✨", "🎀", "💌", "🌷", "⭐", "�
 const NEXT_LABELS: Record<number, string> = {
   1: "Cùng tua lại những khoảnh khắc nhé 🌸",
   2: "Chánh Tâm mãi là nhà 🏡",
-  3: "Đọc lời chúc từ mọi người 💌",
+  3: "Mọi người có đôi lời gửi đến Thi iu dấu nè 💌",
 };
 
 /* exit/enter CSS class map */
@@ -404,32 +404,32 @@ function StepMemories() {
 
       <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
         {MEMORY_PHOTOS.map(({ src, tilt, tall }, i) => (
-          <figure
+          <div
             key={src}
-            className="polaroid-card mb-4 break-inside-avoid rounded-[1.4rem] bg-white p-2.5 shadow-[0_6px_28px_rgba(0,0,0,0.08)]"
-            style={
-              {
-                "--tilt": tilt,
-                animationDelay: `${i * 120}ms`,
-              } as React.CSSProperties
-            }
+            className="mb-4 break-inside-avoid"
+            style={{ transform: `rotate(${tilt})` }}
           >
-            <div
-              className={`relative overflow-hidden rounded-xl bg-blush ${
-                tall ? "aspect-3/4" : "aspect-4/3"
-              }`}
+            <figure
+              className="polaroid-card rounded-[1.4rem] bg-white p-2.5 shadow-[0_6px_28px_rgba(0,0,0,0.08)]"
+              style={{ animationDelay: `${i * 120}ms` } as React.CSSProperties}
             >
-              <Image
-                src={src}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 360px"
-              />
-            </div>
-            {/* polaroid bottom strip */}
-            <div className="h-6" />
-          </figure>
+              <div
+                className={`relative overflow-hidden rounded-xl bg-blush ${
+                  tall ? "aspect-3/4" : "aspect-4/3"
+                }`}
+              >
+                <Image
+                  src={src}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 360px"
+                />
+              </div>
+              {/* polaroid bottom strip */}
+              <div className="h-6" />
+            </figure>
+          </div>
         ))}
       </div>
     </div>
