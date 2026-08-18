@@ -99,19 +99,19 @@ export function WishFormFirebase() {
       className="mx-auto w-full max-w-xl space-y-5 rounded-4xl bg-white p-7 shadow-[0_8px_40px_rgba(249,168,201,0.2)] ring-1 ring-rose/20"
     >
       <div>
-        <h1 className="font-script text-4xl text-navy">Gửi lời chúc 💌</h1>
+        <h1 className="font-script text-4xl text-navy">Nhắn gửi Việt Thi 💌</h1>
         <p className="mt-1 text-sm text-navy/55">
-          Lời chúc của bạn sẽ hiện trên trang lời chúc cho cả nhà cùng đọc.
+          Viết vài dòng cho Thi mang theo nhé — cả nhà sẽ cùng đọc!
         </p>
       </div>
 
       {/* name */}
       <div className="space-y-1">
-        <label className="text-sm font-semibold text-navy/70">Tên bạn *</label>
+        <label className="text-sm font-semibold text-navy/70">Bạn là ai nào? *</label>
         <input
           value={from}
           onChange={(e) => setFrom(e.target.value)}
-          placeholder="Nguyễn Văn A"
+          placeholder="Tên bạn là..."
           required
           className="w-full rounded-2xl bg-blush px-4 py-3 text-sm outline-none ring-1 ring-rose/20 focus:ring-2 focus:ring-rose"
         />
@@ -120,12 +120,12 @@ export function WishFormFirebase() {
       {/* relation */}
       <div className="space-y-1">
         <label className="text-sm font-semibold text-navy/70">
-          Vai trò / Quan hệ <span className="font-normal opacity-50">(tuỳ chọn)</span>
+          Bạn quen Thi qua đâu? <span className="font-normal opacity-50">(tuỳ chọn)</span>
         </label>
         <input
           value={relation}
           onChange={(e) => setRelation(e.target.value)}
-          placeholder="Thành viên Học Chúng Chánh Tâm"
+          placeholder="VD: Huynh đệ Chánh Tâm, bạn cùng khoá tu..."
           className="w-full rounded-2xl bg-blush px-4 py-3 text-sm outline-none ring-1 ring-rose/20 focus:ring-2 focus:ring-rose"
         />
       </div>
@@ -136,7 +136,7 @@ export function WishFormFirebase() {
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Viết lời chúc cho Việt Thi..."
+          placeholder="Muốn nhắn gì với Thi nào? 🌸"
           rows={5}
           required
           className="w-full resize-none rounded-2xl bg-blush px-4 py-3 text-sm leading-7 outline-none ring-1 ring-rose/20 focus:ring-2 focus:ring-rose"
@@ -236,7 +236,7 @@ export function WishFormFirebase() {
         disabled={loading || !from.trim() || !message.trim()}
         className="w-full rounded-full bg-linear-to-r from-rose to-petal py-3.5 text-sm font-bold text-white shadow-[0_4px_20px_rgba(249,168,201,0.45)] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {loading ? "Đang gửi..." : "Gửi lời chúc 💌"}
+        {loading ? "Đang gửi nha..." : "Gửi đến Thi nào! 💌"}
       </button>
     </form>
   );

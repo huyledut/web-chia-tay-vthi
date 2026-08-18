@@ -50,10 +50,10 @@ export function WishWall() {
       <div className="mb-10 text-center">
         <p className="text-3xl">💌</p>
         <h2 className="mt-2 font-script text-5xl text-navy">
-          Lời chúc từ Chánh Tâm
+          Lời chúc gửi Việt Thi 💌
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-navy/65">
-          Học Chúng Chánh Tâm gửi Việt Thi, trước ngày bay sang Mỹ.
+          Mọi người đã nhắn gửi những điều thương yêu nhất cho cậu trước ngày lên đường ✈️
         </p>
 
         {/* CTA */}
@@ -61,13 +61,13 @@ export function WishWall() {
           href="/gui-loi-chuc"
           className="mt-5 inline-flex items-center gap-2 rounded-full bg-linear-to-r from-rose to-petal px-6 py-2.5 text-sm font-bold text-white shadow-[0_4px_20px_rgba(249,168,201,0.4)] transition hover:scale-105"
         >
-          ✍️ Gửi lời chúc của bạn
+          ✍️ Nhắn gửi Thi nào!
         </Link>
       </div>
 
       {loading ? (
         <div className="py-10 text-center text-sm text-navy/40 animate-pulse">
-          Đang tải lời chúc...
+          Đang lấy lời chúc về...
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

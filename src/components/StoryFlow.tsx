@@ -20,9 +20,9 @@ const MEMORY_PHOTOS = [
 const CONFETTI_POOL = ["🌸", "💗", "✨", "🎀", "💌", "🌷", "⭐", "🍀", "🩷", "🌺"];
 
 const NEXT_LABELS: Record<number, string> = {
-  1: "Xem lại những kỷ niệm 🌸",
-  2: "Chánh Tâm là nhà 🏠",
-  3: "Đọc lời chúc cuối cùng 💌",
+  1: "Cùng tua lại những khoảnh khắc nhé 🌸",
+  2: "Chánh Tâm mãi là nhà 🏡",
+  3: "Đọc lời chúc từ mọi người 💌",
 };
 
 /* exit/enter CSS class map */
@@ -161,7 +161,7 @@ export function StoryFlow() {
           ))}
 
           <p className="mb-8 font-script text-3xl text-navy drop-shadow-sm sm:text-4xl lg:mb-12 lg:text-5xl">
-            Có thư gửi Việt Thi 💌
+            Thi ơi, có thư này gửi cho cậu nè 💌
           </p>
 
           {/* envelope button — responsive: grows on wider screens */}
@@ -236,7 +236,7 @@ export function StoryFlow() {
           </button>
 
           <p className="mt-6 animate-pulse text-sm text-navy/55 lg:mt-10 lg:text-base">
-            {isOpening ? "Đang mở thư..." : "Nhấp để mở lá thư"}
+            {isOpening ? "Thư đang mở ra rồi nè..." : "Bấm vào để mở nha 🤍"}
           </p>
         </div>
       ) : null}
@@ -305,7 +305,7 @@ export function StoryFlow() {
       {/* sent-wish toast */}
       {toast ? (
         <div className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-navy shadow-xl ring-1 ring-rose/30">
-          🌸 Lời chúc đã gửi! Cảm ơn bạn.
+          🌸 Gửi rồi nha! Cảm ơn bạn nhiều lắm 💗
         </div>
       ) : null}
 
@@ -375,15 +375,16 @@ function StepThi() {
       {/* text */}
       <div className="space-y-5 text-center md:text-left">
         <h2 className="font-script text-5xl leading-tight text-navy md:text-6xl">
-          Thi sắp đi Mỹ rồi...
+          Thi ơi... cậu sắp đi xa rồi 🥺
         </h2>
         <p className="text-lg leading-8 text-navy/75">
-          Cả nhà Chánh Tâm biết đây là một cuộc chia tay lớn. Chúng mình tự
-          hào, thương, và muốn gửi cậu một hành trình thật ấm áp.
+          Cả nhà Chánh Tâm đều biết — đây không phải chia tay, chỉ là cậu đi
+          xa hơn một chút thôi. Chúng mình tự hào lắm, thương lắm, và muốn
+          cậu mang theo thật nhiều ấm áp.
         </p>
         <div className="flex flex-wrap justify-center gap-2 text-sm md:justify-start">
-          <span className="rounded-full bg-blush px-4 py-2 font-semibold text-plum">✈️ Từ Huế sang Mỹ</span>
-          <span className="rounded-full bg-[#f0f4ff] px-4 py-2 font-semibold text-plum">🙏 Phước Duyên trong tim</span>
+          <span className="rounded-full bg-blush px-4 py-2 font-semibold text-plum">✈️ Huế → Mỹ</span>
+          <span className="rounded-full bg-[#f0f4ff] px-4 py-2 font-semibold text-plum">🏡 Phước Duyên vẫn là nhà</span>
         </div>
       </div>
     </div>
@@ -395,9 +396,9 @@ function StepMemories() {
   return (
     <div>
       <div className="mb-8 text-center">
-        <h2 className="font-script text-5xl text-navy">Những kỷ niệm</h2>
+        <h2 className="font-script text-5xl text-navy">Những khoảnh khắc mình có nhau 🫶</h2>
         <p className="mt-2 text-navy/60">
-          Chánh Tâm giữ lại đây, gửi theo cậu sang Mỹ.
+          Mỗi tấm ảnh là một mảnh Huế theo cậu sang bên đó.
         </p>
       </div>
 
@@ -458,11 +459,11 @@ function StepChanTam() {
           Học Chúng Chánh Tâm · Tự Viện Phước Duyên
         </p>
         <h2 className="mt-2 font-script text-4xl text-navy sm:text-5xl">
-          Nhà là nơi để về
+          Nhà vẫn ở đây, đợi cậu về 🏡
         </h2>
         <p className="mt-4 max-w-xl text-lg leading-8 text-navy/75">
-          Tự Viện Phước Duyên và Học Chúng Chánh Tâm vẫn ở đây. Cứ đi hết
-          mình với hành trình mới — phía sau luôn có một nơi gọi là nhà.
+          Tự Viện Phước Duyên và cả nhà Chánh Tâm vẫn ở đây chờ cậu. Cứ đi
+          hết mình nha Thi — bất cứ lúc nào nhớ nhà, chỗ này vẫn còn nguyên đó.
         </p>
       </div>
     </div>
