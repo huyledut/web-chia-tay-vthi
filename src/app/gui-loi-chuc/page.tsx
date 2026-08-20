@@ -8,15 +8,10 @@ export const metadata: Metadata = {
 
 export default function GuiLoiChucPage() {
   return (
-    <main
-      className="min-h-screen px-4 pb-24 pt-12"
-      style={{
-        background: "linear-gradient(160deg,#fff0f8 0%,#f3effe 50%,#e8f6ff 100%)",
-      }}
-    >
-      {/* floating petals decoration */}
+    <main className="min-h-screen px-4 pb-24 pt-12">
+      {/* floating decor */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
-        {["🌸", "💗", "✨", "💌", "🌷"].map((e, i) => (
+        {["🍃", "🌿", "☁️", "🏡", "🦋"].map((e, i) => (
           <span
             key={i}
             className="drift absolute text-2xl"

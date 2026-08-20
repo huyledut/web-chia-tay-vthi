@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-blush:  #fff0f8;
-  --color-rose:   #f9a8c9;
-  --color-petal:  #fbc6d8;
-  --color-sky:    #c8e6f5;
-  --color-mint:   #c2f0e8;
-  --color-lemon:  #fef3c7;
-  --color-cream:  #fffaf5;
-  --color-peach:  #ffd8c2;
-  --color-lilac:  #ead7f5;
-  --color-navy:   #3b2f4a;
-  --color-plum:   #7c5c8a;
+  --color-blush:  #f7f3ea;
+  --color-rose:   #9bb896;
+  --color-petal:  #b8d4e8;
+  --color-sky:    #b8d4e8;
+  --color-mint:   #8fb88a;
+  --color-lemon:  #e8d7a8;
+  --color-cream:  #fefcf6;
+  --color-peach:  #dcc4a8;
+  --color-lilac:  #d4e8d4;
+  --color-navy:   #4f4a43;
+  --color-plum:   #6b7568;
   --font-sans:    var(--font-nunito);
   --font-script:  var(--font-mali);
 }
@@ -22,8 +22,65 @@ body {
 }
 
 body {
-  background: linear-gradient(160deg, #fff0f8 0%, #f3effe 50%, #e8f6ff 100%);
+  background-color: #f5f8f2;
   color: var(--color-navy);
+}
+
+.scene-bg {
+  /* fallback khớp vùng trung tâm cream + đồi xanh tranh mới */
+  background:
+    radial-gradient(ellipse 88% 68% at 50% 44%, rgb(255 252 247 / 0.97), transparent 72%),
+    linear-gradient(
+      180deg,
+      rgb(218 236 228) 0%,
+      rgb(240 248 238) 14%,
+      rgb(255 252 247) 38%,
+      rgb(255 252 247) 58%,
+      rgb(232 244 228) 80%,
+      rgb(188 214 168) 100%
+    );
+}
+
+.scene-art {
+  pointer-events: none;
+  user-select: none;
+}
+
+.scene-art-mobile {
+  object-position: center center;
+}
+
+.scene-art-desktop {
+  object-position: center center;
+}
+
+/* màn rất cao (điện thoại dài): giữ đồi dưới + lá trên */
+@media (max-width: 1023px) and (orientation: portrait) and (min-aspect-ratio: 9/18) {
+  .scene-art-mobile {
+    object-position: center 46%;
+  }
+}
+
+/* màn rộng (desktop / ultrawide): giữ khung lá + đồi hai bên */
+@media (min-width: 1024px) and (min-aspect-ratio: 16/9) {
+  .scene-art-desktop {
+    object-position: center 52%;
+  }
+}
+
+.scene-vignette {
+  background:
+    radial-gradient(circle at 50% 42%, transparent 38%, rgb(255 252 247 / 0.06) 100%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.04), transparent 22%, transparent 78%, rgb(140 180 130 / 0.07));
+}
+
+.content-panel {
+  background: rgb(254 252 246 / 0.78);
+  backdrop-filter: blur(8px);
+}
+
+.bg-radial {
+  background-image: radial-gradient(circle, var(--tw-gradient-stops));
 }
 
 /* ── floating decor ──────────────────────────────────── */
@@ -39,10 +96,53 @@ body {
 .float-slow { animation: float-y 4.5s ease-in-out infinite; }
 .drift      { animation: drift linear infinite; }
 
+/* ── envelope mood ───────────────────────────────────── */
+@keyframes envelope-halo {
+  0%, 100% {
+    transform: scale(0.96);
+    opacity: 0.32;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.6;
+  }
+}
+@keyframes envelope-sheen {
+  0%   { transform: translateX(-130%) rotate(12deg); opacity: 0; }
+  24%  { opacity: 0.22; }
+  60%  { opacity: 0.12; }
+  100% { transform: translateX(140%) rotate(12deg); opacity: 0; }
+}
+.envelope-halo {
+  background:
+    radial-gradient(circle at center, rgb(155 184 150 / 0.28), transparent 56%),
+    radial-gradient(circle at 50% 65%, rgb(184 212 232 / 0.5), transparent 60%);
+  animation: envelope-halo 2.8s ease-in-out infinite;
+}
+.envelope-card::after {
+  content: "";
+  position: absolute;
+  inset: -18% auto -18% -36%;
+  width: 42%;
+  background: linear-gradient(
+    90deg,
+    rgb(255 255 255 / 0),
+    rgb(255 255 255 / 0.26),
+    rgb(255 255 255 / 0)
+  );
+  transform: rotate(12deg);
+  animation: envelope-sheen 4.6s ease-in-out infinite;
+}
+.envelope-glow {
+  background:
+    radial-gradient(circle at 50% 25%, rgb(255 255 255 / 0.68), transparent 36%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.12), transparent);
+}
+
 /* ── music pulse ─────────────────────────────────────── */
 @keyframes music-pulse {
-  0%, 100% { box-shadow: 0 0 0 0   rgb(249 168 201 / 0.5); }
-  70%      { box-shadow: 0 0 0 14px rgb(249 168 201 / 0);   }
+  0%, 100% { box-shadow: 0 0 0 0   rgb(155 184 150 / 0.5); }
+  70%      { box-shadow: 0 0 0 14px rgb(155 184 150 / 0);   }
 }
 .music-pulse { animation: music-pulse 1.8s ease-out infinite; }
 
@@ -66,9 +166,9 @@ body {
 }
 
 .enter-1 { animation: enter-pop      640ms cubic-bezier(0.2, 0.9, 0.3, 1) both; }
-.enter-2 { animation: enter-fall     520ms ease-out both; }
-.enter-3 { animation: enter-bloom    700ms ease-out both; }
-.enter-4 { animation: enter-slide-up 540ms ease-out both; }
+.enter-2 { animation: enter-fall     620ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.enter-3 { animation: enter-bloom    760ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.enter-4 { animation: enter-slide-up 620ms cubic-bezier(0.16, 1, 0.3, 1) both; }
 
 /* ── step EXIT animations ────────────────────────────── */
 @keyframes exit-shrink {
@@ -84,6 +184,7 @@ body {
 .exit-1 { animation: exit-shrink    440ms ease-in both; }
 .exit-2 { animation: exit-scatter   440ms ease-in both; }
 .exit-3 { animation: exit-fade-down 400ms ease-in both; }
+.exit-4 { animation: exit-fade-down 360ms ease-in both; }
 
 /* ── polaroid bounce-in ──────────────────────────────── */
 @keyframes polaroid-in {
@@ -98,4 +199,212 @@ body {
 @keyframes confetti-fall {
   0%   { opacity: 1; transform: translateY(-24px) rotate(0deg); }
   100% { opacity: 0; transform: translateY(108vh) rotate(720deg); }
+}
+
+/* ── chibi stickers ─────────────────────────────────── */
+@keyframes chibi-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); opacity: 0.92; }
+  50%       { transform: translateY(-16px) rotate(2deg); opacity: 1; }
+}
+
+@keyframes chibi-sparkle {
+  0%, 100% { transform: scale(0.98) rotate(-1deg); opacity: 0.85; }
+  50%       { transform: scale(1.06) rotate(1deg); opacity: 1; }
+}
+
+.chibi-float { animation: chibi-float 4.8s ease-in-out infinite; }
+.chibi-sparkle { animation: chibi-sparkle 2.2s ease-in-out infinite; }
+
+/* ── letter pages (bước 4) ───────────────────────────── */
+.letter-page {
+  background-color: #fefcf6;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 12% 0%, rgb(255 252 247 / 0.95), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 88% 100%, rgb(245 240 232 / 0.45), transparent 50%);
+}
+
+.letter-body {
+  padding-inline: 2px;
+}
+
+.wish-polaroid {
+  background: #fff;
+  padding: 0.55rem 0.55rem 2.25rem;
+  box-shadow:
+    0 14px 28px rgb(107 117 104 / 0.14),
+    0 2px 0 rgb(255 255 255 / 0.9) inset;
+}
+
+.wish-tape {
+  position: absolute;
+  z-index: 2;
+  height: 18px;
+  width: 52px;
+  border-radius: 2px;
+  background: rgb(255 248 220 / 0.72);
+  box-shadow: 0 1px 2px rgb(107 117 104 / 0.12);
+  opacity: 0.92;
+}
+
+.wish-tape-left {
+  top: -7px;
+  left: 18%;
+  transform: rotate(-7deg);
+}
+
+.wish-tape-right {
+  top: -6px;
+  right: 16%;
+  transform: rotate(8deg);
+}
+
+.wish-media-slot {
+  min-height: 0;
+}
+
+/* ── open book ───────────────────────────────────────── */
+.book-stage {
+  perspective: 1400px;
+}
+
+.book-cover {
+  position: relative;
+  padding: 0.65rem;
+  border-radius: 1.35rem;
+  background:
+    linear-gradient(145deg, rgb(232 210 184) 0%, rgb(216 188 158) 48%, rgb(198 168 138) 100%);
+  box-shadow:
+    0 28px 60px rgb(107 117 104 / 0.2),
+    0 8px 18px rgb(107 117 104 / 0.1),
+    inset 0 1px 0 rgb(255 255 255 / 0.35);
+  transform: rotateX(1.5deg);
+  transform-origin: center bottom;
+}
+
+.book-spread {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.85rem;
+  background: rgb(254 252 246 / 0.35);
+}
+
+.book-gutter {
+  box-shadow:
+    inset 10px 0 14px rgb(107 117 104 / 0.05),
+    inset -10px 0 14px rgb(107 117 104 / 0.05);
+}
+
+.book-spine {
+  position: absolute;
+  inset-block: 0.85rem;
+  left: 50%;
+  z-index: 20;
+  width: 0.65rem;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgb(168 132 98) 0%,
+    rgb(246 236 220) 42%,
+    rgb(168 132 98) 100%
+  );
+  box-shadow:
+    inset 0 0 8px rgb(90 60 40 / 0.25),
+    0 0 0 1px rgb(255 255 255 / 0.15);
+}
+
+.book-edge {
+  position: absolute;
+  right: 0.45rem;
+  bottom: 0.35rem;
+  width: 2.5rem;
+  height: 0.35rem;
+  border-radius: 1px;
+  background: repeating-linear-gradient(
+    180deg,
+    rgb(254 252 246) 0,
+    rgb(254 252 246) 2px,
+    rgb(232 224 210) 2px,
+    rgb(232 224 210) 3px
+  );
+  opacity: 0.85;
+}
+
+.book-page-left {
+  box-shadow: inset -6px 0 10px rgb(107 117 104 / 0.04);
+}
+
+.book-page-right {
+  box-shadow: inset 6px 0 10px rgb(107 117 104 / 0.04);
+}
+
+.book-page-single {
+  box-shadow: none;
+}
+
+.book-shell {
+  background-size: 100% 100%;
+  transform-style: preserve-3d;
+  transform-origin: center bottom;
+}
+
+@media (min-width: 1024px) {
+  .wish-book-page {
+    min-height: 380px;
+    max-height: min(62vh, 480px);
+  }
+}
+
+@keyframes page-flip-next {
+  0% {
+    transform: perspective(1600px) rotateY(0deg) scale(1);
+  }
+  45% {
+    transform: perspective(1600px) rotateY(-14deg) scale(0.985);
+  }
+  100% {
+    transform: perspective(1600px) rotateY(-4deg) scale(0.995);
+  }
+}
+
+@keyframes page-flip-prev {
+  0% {
+    transform: perspective(1600px) rotateY(0deg) scale(1);
+  }
+  45% {
+    transform: perspective(1600px) rotateY(14deg) scale(0.985);
+  }
+  100% {
+    transform: perspective(1600px) rotateY(4deg) scale(0.995);
+  }
+}
+
+.page-flip-next {
+  animation: page-flip-next 330ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.page-flip-prev {
+  animation: page-flip-prev 330ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float-slow,
+  .drift,
+  .music-pulse,
+  .polaroid-card,
+  .enter-1,
+  .enter-2,
+  .enter-3,
+  .enter-4,
+  .exit-1,
+  .exit-2,
+  .exit-3,
+  .exit-4,
+  .envelope-halo,
+  .envelope-card::after,
+  .page-flip-next,
+  .page-flip-prev {
+    animation: none !important;
+    transition: none !important;
+  }
 }

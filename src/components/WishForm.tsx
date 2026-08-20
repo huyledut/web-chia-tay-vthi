@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect */
+
 import { FormEvent, useEffect, useState } from "react";
 import { WishCard } from "./WishCard";
 import type { Wish } from "@/data/wishes";
@@ -45,14 +47,19 @@ export function WishForm() {
       {extra.length > 0 ? (
         <div className="mb-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {extra.map((wish, index) => (
-            <WishCard key={wish.id} wish={wish} index={index} />
+            <WishCard
+              key={wish.id}
+              wish={wish}
+              layout="single"
+              pageNumber={index + 1}
+            />
           ))}
         </div>
       ) : null}
 
       <form
         onSubmit={onSubmit}
-        className="mx-auto max-w-xl rounded-[2rem] bg-white/80 p-6 shadow-lg ring-1 ring-clay/20"
+        className="mx-auto max-w-xl rounded-4xl bg-white/80 p-6 shadow-lg ring-1 ring-clay/20"
       >
         <h3 className="font-script text-3xl text-navy">
           Thành viên Chánh Tâm gửi thêm lời chúc

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Mali, Nunito } from "next/font/google";
 import { FloatingDecor } from "@/components/FloatingDecor";
+import { SceneBackground } from "@/components/SceneBackground";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -30,8 +31,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${nunito.variable} ${mali.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col font-sans">
+        <SceneBackground />
         <FloatingDecor />
-        <div className="relative flex flex-1 flex-col">{children}</div>
+        <div className="relative z-10 flex flex-1 flex-col">{children}</div>
       </body>
     </html>
   );

@@ -96,7 +96,7 @@ export function WishFormFirebase() {
   return (
     <form
       onSubmit={onSubmit}
-      className="mx-auto w-full max-w-xl space-y-5 rounded-4xl bg-white p-7 shadow-[0_8px_40px_rgba(249,168,201,0.2)] ring-1 ring-rose/20"
+      className="mx-auto w-full max-w-xl space-y-5 rounded-4xl bg-white/88 p-7 shadow-[0_8px_40px_rgba(155,184,150,0.18)] ring-1 ring-mint/20 backdrop-blur-sm"
     >
       <div>
         <h1 className="font-script text-4xl text-navy">Nhắn gửi Việt Thi 💌</h1>
@@ -234,7 +234,7 @@ export function WishFormFirebase() {
       <button
         type="submit"
         disabled={loading || !from.trim() || !message.trim()}
-        className="w-full rounded-full bg-linear-to-r from-rose to-petal py-3.5 text-sm font-bold text-white shadow-[0_4px_20px_rgba(249,168,201,0.45)] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full rounded-full bg-linear-to-r from-mint to-sky py-3.5 text-sm font-bold text-white shadow-[0_4px_20px_rgba(155,184,150,0.45)] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? "Đang gửi nha..." : "Gửi đến Thi nào! 💌"}
       </button>

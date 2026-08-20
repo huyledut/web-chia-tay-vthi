@@ -1,4 +1,4 @@
-const ITEMS = ["🌸", "💌", "☁️", "✈️", "💗", "✨"];
+const ITEMS = ["🍃", "🌿", "☁️", "🏡", "✈️", "🦋"];
 
 export function FloatingDecor() {
   return (
