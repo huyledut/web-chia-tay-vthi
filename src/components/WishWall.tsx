@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { wishes as staticWishes, type Wish } from "@/data/wishes";
+import type { Wish } from "@/data/wishes";
 import { WishCard } from "./WishCard";
 
 function pageLabel(
@@ -11,6 +11,7 @@ function pageLabel(
   total: number,
   spreadSize: number
 ) {
+  if (total === 0) return "Chưa có lời chúc";
   if (spreadSize === 1) {
     return `Trang ${start + 1} / ${total}`;
   }
@@ -81,12 +82,13 @@ export function WishWall({
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  const allWishes: Wish[] = [...fireWishes, ...staticWishes];
-  const totalSpreads = Math.max(1, Math.ceil(allWishes.length / spreadSize));
-  const safeSpread = Math.min(spread, totalSpreads - 1);
+  const allWishes: Wish[] = fireWishes;
+  const totalSpreads = Math.max(1, Math.ceil(allWishes.length / spreadSize) || 1);
+  const safeSpread = Math.min(spread, Math.max(0, totalSpreads - 1));
   const start = safeSpread * spreadSize;
   const visibleWishes = allWishes.slice(start, start + spreadSize);
   const isDesktopSpread = spreadSize === 2;
+  const isEmpty = allWishes.length === 0;
 
   function flipTo(direction: "next" | "prev") {
     if (isFlipping) return;
@@ -148,33 +150,55 @@ export function WishWall({
           >
             <div className="book-spine pointer-events-none hidden lg:block" aria-hidden />
             <div className="book-spread book-gutter relative grid min-h-0 flex-1 auto-rows-fr lg:grid-cols-2 lg:gap-0">
-              {visibleWishes[0] ? (
-                <WishCard
-                  key={visibleWishes[0].id}
-                  wish={visibleWishes[0]}
-                  layout={isDesktopSpread ? "left" : "single"}
-                  pageNumber={start + 1}
-                />
-              ) : null}
-
-              {isDesktopSpread && visibleWishes[1] ? (
-                <WishCard
-                  key={visibleWishes[1].id}
-                  wish={visibleWishes[1]}
-                  layout="right"
-                  pageNumber={start + 2}
-                />
-              ) : isDesktopSpread ? (
-                <div className="letter-page wish-book-page book-page book-page-right relative hidden h-full min-h-0 self-stretch lg:flex lg:flex-col">
+              {isEmpty ? (
+                <div className="letter-page wish-book-page book-page book-page-single relative col-span-full flex h-full min-h-0 flex-col self-stretch lg:col-span-2">
                   <div className="flex flex-1 flex-col items-center justify-center px-8 py-10 text-center text-plum/55">
-                    <span className="mb-4 text-4xl opacity-70">📖</span>
-                    <p className="font-script text-2xl">Trang tiếp theo đang chờ...</p>
-                    <p className="mt-3 max-w-xs text-xs leading-6">
-                      Khi có thêm lời nhắn mới, cuốn sổ này sẽ đầy dần lên nữa.
+                    <span className="mb-4 text-4xl opacity-70">💌</span>
+                    <p className="font-script text-2xl text-navy/70">
+                      Sổ còn trống…
                     </p>
+                    <p className="mt-3 max-w-xs text-xs leading-6">
+                      Hãy là người đầu tiên viết lời thương gửi Thi nha.
+                    </p>
+                    <Link
+                      href="/gui-loi-chuc"
+                      className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-mint to-sky px-5 py-2 text-xs font-bold text-white shadow-[0_8px_28px_rgba(155,184,150,0.35)]"
+                    >
+                      ✍️ Viết cho Thi
+                    </Link>
                   </div>
                 </div>
-              ) : null}
+              ) : (
+                <>
+                  {visibleWishes[0] ? (
+                    <WishCard
+                      key={visibleWishes[0].id}
+                      wish={visibleWishes[0]}
+                      layout={isDesktopSpread ? "left" : "single"}
+                      pageNumber={start + 1}
+                    />
+                  ) : null}
+
+                  {isDesktopSpread && visibleWishes[1] ? (
+                    <WishCard
+                      key={visibleWishes[1].id}
+                      wish={visibleWishes[1]}
+                      layout="right"
+                      pageNumber={start + 2}
+                    />
+                  ) : isDesktopSpread ? (
+                    <div className="letter-page wish-book-page book-page book-page-right relative hidden h-full min-h-0 self-stretch lg:flex lg:flex-col">
+                      <div className="flex flex-1 flex-col items-center justify-center px-8 py-10 text-center text-plum/55">
+                        <span className="mb-4 text-4xl opacity-70">📖</span>
+                        <p className="font-script text-2xl">Trang tiếp theo đang chờ...</p>
+                        <p className="mt-3 max-w-xs text-xs leading-6">
+                          Khi có thêm lời nhắn mới, cuốn sổ này sẽ đầy dần lên nữa.
+                        </p>
+                      </div>
+                    </div>
+                  ) : null}
+                </>
+              )}
             </div>
             <div className="book-edge pointer-events-none hidden lg:block" aria-hidden />
           </div>
@@ -183,7 +207,7 @@ export function WishWall({
             <button
               type="button"
               onClick={() => flipTo("prev")}
-              disabled={safeSpread === 0 || isFlipping}
+              disabled={isEmpty || safeSpread === 0 || isFlipping}
               className="rounded-full border border-mint/30 bg-white/80 px-4 py-2 text-xs font-semibold text-plum shadow-[0_10px_30px_rgba(155,184,150,0.1)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 lg:px-4 lg:py-2"
             >
               ← Trước
@@ -191,7 +215,9 @@ export function WishWall({
             <button
               type="button"
               onClick={() => flipTo("next")}
-              disabled={safeSpread >= totalSpreads - 1 || isFlipping}
+              disabled={
+                isEmpty || safeSpread >= totalSpreads - 1 || isFlipping
+              }
               className="rounded-full bg-linear-to-r from-mint to-sky px-4 py-2 text-xs font-bold text-white shadow-[0_12px_30px_rgba(155,184,150,0.28)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 lg:px-5"
             >
               Sau →
