@@ -19,6 +19,7 @@
 html,
 body {
   min-height: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -225,14 +226,148 @@ body {
 
 .letter-body {
   padding-inline: 2px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.letter-body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.step1-copy {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.step1-copy::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.step0-title {
+  font-size: clamp(1.75rem, 2.4vw + 1.2rem, 3.75rem);
+}
+
+.step0-sub {
+  font-size: clamp(0.875rem, 0.4vw + 0.75rem, 1.125rem);
+  line-height: 1.55;
+}
+
+.envelope-visual {
+  width: min(78vw, 22rem);
+}
+
+@media (min-width: 640px) {
+  .envelope-visual {
+    width: min(62vw, 28rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .envelope-visual {
+    width: min(48vw, 32rem);
+  }
+}
+
+@media (max-height: 760px) {
+  .envelope-visual {
+    width: min(52vw, 22rem);
+  }
+}
+
+@media (max-height: 640px) {
+  .envelope-visual {
+    width: min(42vw, 16rem);
+  }
+
+  .step0-title {
+    font-size: clamp(1.4rem, 2vw + 0.9rem, 2.2rem);
+  }
+
+  .step0-sub {
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+}
+
+.step1-photo {
+  height: min(42svh, 15.5rem);
+  aspect-ratio: 3 / 4;
+  width: auto;
+}
+
+.step1-title {
+  font-size: clamp(1.55rem, 2.8vw + 1.1rem, 3.4rem);
+}
+
+.step1-body {
+  font-size: clamp(0.875rem, 0.35vw + 0.8rem, 1.125rem);
+  line-height: 1.65;
+}
+
+@media (min-width: 640px) {
+  .step1-photo {
+    height: min(52svh, 20rem);
+  }
+
+  .step1-body {
+    line-height: 1.7;
+  }
+}
+
+@media (min-width: 1024px) {
+  .step1-photo {
+    height: min(56svh, 22rem);
+  }
+}
+
+@media (max-height: 720px) and (min-width: 640px) {
+  .step1-photo {
+    height: min(46svh, 16rem);
+  }
+
+  .step1-title {
+    font-size: clamp(1.45rem, 2.2vw + 0.9rem, 2.6rem);
+  }
+
+  .step1-body {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .step1-photo {
+    height: min(70svh, 12rem);
+  }
+
+  .step1-title {
+    font-size: clamp(1.25rem, 3vh + 0.6rem, 1.8rem);
+  }
+
+  .step1-body {
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
 }
 
 .wish-polaroid {
   background: #fff;
-  padding: 0.55rem 0.55rem 2.25rem;
+  padding: 0.4rem 0.4rem 1.35rem;
   box-shadow:
     0 14px 28px rgb(107 117 104 / 0.14),
     0 2px 0 rgb(255 255 255 / 0.9) inset;
+}
+
+@media (min-width: 1024px) {
+  .wish-polaroid {
+    padding: 0.55rem 0.55rem 2.25rem;
+  }
 }
 
 .wish-tape {
@@ -269,16 +404,24 @@ body {
 
 .book-cover {
   position: relative;
-  padding: 0.65rem;
-  border-radius: 1.35rem;
+  padding: 0.45rem;
+  border-radius: 1.1rem;
   background:
     linear-gradient(145deg, rgb(232 210 184) 0%, rgb(216 188 158) 48%, rgb(198 168 138) 100%);
   box-shadow:
     0 28px 60px rgb(107 117 104 / 0.2),
     0 8px 18px rgb(107 117 104 / 0.1),
     inset 0 1px 0 rgb(255 255 255 / 0.35);
-  transform: rotateX(1.5deg);
+  transform: none;
   transform-origin: center bottom;
+}
+
+@media (min-width: 1024px) {
+  .book-cover {
+    padding: 0.65rem;
+    border-radius: 1.35rem;
+    transform: rotateX(1.5deg);
+  }
 }
 
 .book-spread {
@@ -286,6 +429,7 @@ body {
   overflow: hidden;
   border-radius: 0.85rem;
   background: rgb(254 252 246 / 0.35);
+  min-height: 0;
 }
 
 .book-gutter {
@@ -348,11 +492,15 @@ body {
   transform-origin: center bottom;
 }
 
-@media (min-width: 1024px) {
-  .wish-book-page {
-    min-height: 380px;
-    max-height: min(62vh, 480px);
-  }
+.wish-book-page {
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+}
+
+.book-spread > * {
+  min-height: 0;
+  min-width: 0;
 }
 
 @keyframes page-flip-next {

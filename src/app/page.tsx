@@ -20,12 +20,14 @@ export default async function Home({
   const step = gui === "ok" ? 4 : buoc;
 
   let fireWishes: Wish[] = [];
-  if (step === 4) {
+  try {
     fireWishes = await fetchFireWishes();
+  } catch {
+    fireWishes = [];
   }
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative">
       <StoryFlow
         cameFromForm={gui === "ok"}
         initialStep={step}

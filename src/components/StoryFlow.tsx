@@ -20,6 +20,31 @@ const MEMORY_PHOTOS = [
   { src: "/photos/mem-extra-4.png", tilt: "-2.2deg", tall: false },
 ] as const;
 
+const MEMORY_TILTS = [
+  "1.5deg",
+  "-2deg",
+  "-1deg",
+  "2.5deg",
+  "-1.5deg",
+  "1deg",
+  "-2deg",
+  "2deg",
+  "1.8deg",
+  "-1.4deg",
+] as const;
+
+function wishImageList(wishes: Wish[]) {
+  const seen = new Set<string>();
+  const urls: string[] = [];
+  for (const wish of wishes) {
+    const url = wish.imageUrl?.trim();
+    if (!url || seen.has(url)) continue;
+    seen.add(url);
+    urls.push(url);
+  }
+  return urls;
+}
+
 const CONFETTI_POOL = ["🌸", "💗", "✨", "🎀", "💌", "🌷", "⭐", "🌺"];
 
 const NEXT_LABELS: Record<number, string> = {
@@ -84,16 +109,16 @@ function spawnConfetti() {
 function EnvelopeVisual({ isOpening }: { isOpening: boolean }) {
   return (
     <span
-      className="pointer-events-none relative block w-[90vw] max-w-75 sm:max-w-105 lg:max-w-145"
+      className="envelope-visual pointer-events-none relative block"
       aria-hidden
     >
       <span className="block w-full" style={{ paddingBottom: "73.33%" }} />
 
-      <span className="envelope-card absolute inset-0 overflow-hidden rounded-[28px]">
-        <span className="envelope-glow absolute inset-x-[7%] bottom-[7%] top-[12%] rounded-[26px]" />
+      <span className="envelope-card absolute inset-0 overflow-hidden rounded-[22px] sm:rounded-[28px]">
+        <span className="envelope-glow absolute inset-x-[7%] bottom-[7%] top-[12%] rounded-[22px] sm:rounded-[26px]" />
 
         <span
-          className="absolute left-[6%] right-[6%] rounded-[22px] bg-white/95 text-left shadow-[0_18px_48px_rgba(255,255,255,0.5)]"
+          className="absolute left-[6%] right-[6%] rounded-[18px] bg-white/95 text-left shadow-[0_18px_48px_rgba(255,255,255,0.5)] sm:rounded-[22px]"
           style={{
             bottom: "15%",
             padding: "5% 6%",
@@ -105,10 +130,10 @@ function EnvelopeVisual({ isOpening }: { isOpening: boolean }) {
               "transform 960ms cubic-bezier(0.2, 0.92, 0.2, 1), box-shadow 360ms ease",
           }}
         >
-          <span className="block font-script text-[1.1rem] text-plum sm:text-2xl">
+          <span className="block font-script text-[0.95rem] text-plum sm:text-[1.1rem] md:text-2xl">
             Gửi Việt Thi 🌸
           </span>
-          <span className="mt-1 block text-[0.7rem] leading-5 text-navy/60 sm:text-sm">
+          <span className="mt-0.5 block text-[0.65rem] leading-4 text-navy/60 sm:mt-1 sm:text-[0.7rem] sm:leading-5 md:text-sm">
             Từ Học Chúng Chánh Tâm · Tự Viện Phước Duyên · Huế
           </span>
         </span>
@@ -146,7 +171,7 @@ function EnvelopeVisual({ isOpening }: { isOpening: boolean }) {
         </svg>
 
         <span
-          className="pointer-events-none absolute left-1/2 z-10 -translate-x-1/2 text-3xl drop-shadow-sm"
+          className="pointer-events-none absolute left-1/2 z-10 -translate-x-1/2 text-2xl drop-shadow-sm sm:text-3xl"
           style={{
             top: "27%",
             transform: isOpening ? "translateX(-50%) scale(0.75)" : "translateX(-50%) scale(1)",
@@ -179,7 +204,40 @@ export function StoryFlow({
   const [playing, setPlaying] = useState(false);
   const [toast, setToast] = useState(cameFromForm);
   const [btnVisible, setBtnVisible] = useState((cameFromForm ? 4 : initialStep) > 0);
+  const [liveWishes, setLiveWishes] = useState<Wish[]>(fireWishes);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    let unsub: (() => void) | undefined;
+
+    import("@/lib/firebase")
+      .then(({ db }) => import("firebase/firestore").then((fs) => ({ db, fs })))
+      .then(({ db, fs }) => {
+        const q = fs.query(
+          fs.collection(db, "wishes"),
+          fs.orderBy("createdAt", "desc")
+        );
+        unsub = fs.onSnapshot(
+          q,
+          (snap) => {
+            setLiveWishes(
+              snap.docs.map((d) => ({
+                id: d.id,
+                ...(d.data() as Omit<Wish, "id">),
+              }))
+            );
+          },
+          () => {
+            /* keep server wishes if live listener fails */
+          }
+        );
+      })
+      .catch(() => {
+        /* iOS / Messenger: keep SSR wishes */
+      });
+
+    return () => unsub?.();
+  }, []);
 
   useEffect(() => {
     if (!toast) return;
@@ -290,17 +348,17 @@ export function StoryFlow({
 
       {renderStep === 0 ? (
         <section
-          className="relative z-30 flex min-h-dvh flex-col items-center justify-center overflow-hidden px-4 pb-16 pt-10 text-center"
+          className="relative z-30 flex h-svh max-h-svh flex-col items-center justify-center overflow-hidden px-4 py-4 text-center sm:py-6"
           style={{ perspective: "1500px" }}
         >
-          <div className="relative max-w-3xl">
-            <p className="mb-3 inline-flex rounded-full bg-white/78 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-plum/75 shadow-[0_10px_30px_rgba(155,184,150,0.18)] ring-1 ring-white/70 backdrop-blur-sm">
+          <div className="relative max-w-3xl shrink-0 px-1">
+            <p className="mb-2 inline-flex rounded-full bg-white/78 px-3 py-1.5 text-[10px] font-semibold tracking-[0.16em] text-plum/75 shadow-[0_10px_30px_rgba(155,184,150,0.18)] ring-1 ring-white/70 backdrop-blur-sm sm:mb-3 sm:px-4 sm:py-2 sm:text-xs">
               THƯ NHỎ TỪ CHÁNH TÂM
             </p>
-            <h1 className="pb-1 font-script text-5xl leading-[1.1] text-navy drop-shadow-sm sm:text-6xl lg:text-7xl">
+            <h1 className="step0-title pb-0.5 font-script leading-[1.1] text-navy drop-shadow-sm">
               Thi ơi, có thư này gửi cho cậu nè 💌
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-navy/70 sm:text-lg">
+            <p className="step0-sub mx-auto mt-2 max-w-xl text-navy/70 sm:mt-3">
               Bên trong là một chút thương, một chút nhớ, và rất nhiều điều muốn
               gửi theo cậu trong hành trình mới.
             </p>
@@ -310,10 +368,10 @@ export function StoryFlow({
             type="button"
             onClick={openEnvelope}
             disabled={isTransitioning}
-            className="group relative mt-10 touch-manipulation focus:outline-none"
+            className="group relative mt-4 shrink-0 touch-manipulation focus:outline-none sm:mt-6"
             style={{ WebkitTapHighlightColor: "transparent" }}
           >
-            <span className="envelope-halo absolute -inset-10 rounded-full" />
+            <span className="envelope-halo absolute -inset-6 rounded-full sm:-inset-10" />
             <span
               className="block transition-transform duration-700 ease-out group-hover:-translate-y-1 group-active:scale-[0.985]"
               style={{
@@ -326,14 +384,14 @@ export function StoryFlow({
             </span>
           </button>
 
-          <div className="mt-7 space-y-3">
-            <p className="inline-flex items-center gap-2 rounded-full bg-white/80 px-5 py-2 text-sm font-semibold text-plum shadow-[0_10px_35px_rgba(155,184,150,0.2)] ring-1 ring-white/75 backdrop-blur-sm">
+          <div className="mt-4 shrink-0 space-y-2 sm:mt-5 sm:space-y-3">
+            <p className="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-1.5 text-xs font-semibold text-plum shadow-[0_10px_35px_rgba(155,184,150,0.2)] ring-1 ring-white/75 backdrop-blur-sm sm:px-5 sm:py-2 sm:text-sm">
               <span className="text-base">{isOpening ? "🎶" : "💗"}</span>
               {isOpening
                 ? "Nhạc đang ngân lên rồi đó..."
                 : "Chạm vào lá thư để mở nhạc và bắt đầu"}
             </p>
-            <p className="text-xs tracking-[0.14em] text-plum/55">
+            <p className="text-[10px] tracking-[0.14em] text-plum/55 sm:text-xs">
               BẤT NGỜ NHỎ ĐANG CHỜ PHÍA SAU
             </p>
           </div>
@@ -342,13 +400,15 @@ export function StoryFlow({
 
       {renderStep > 0 ? (
         <section
-          className={`mx-auto min-h-dvh w-full px-4 pt-8 sm:px-6 md:px-8 ${
-            displayStep === 4 ? "max-w-7xl pb-8 lg:px-10" : "max-w-5xl pb-28"
-          }`}
+          className={`mx-auto w-full px-4 sm:px-6 md:px-8 ${
+            displayStep === 1 || displayStep === 4
+              ? "flex h-svh max-h-svh min-h-0 flex-col overflow-hidden pt-4 pb-5 lg:px-10"
+              : "min-h-dvh max-w-5xl pb-28 pt-8"
+          } ${displayStep === 4 || displayStep === 1 ? "max-w-7xl" : ""}`}
         >
           <div
-            className={`flex items-center justify-center gap-2 ${
-              displayStep === 4 ? "mb-4 lg:mb-5" : "mb-10"
+            className={`flex shrink-0 items-center justify-center gap-2 ${
+              displayStep === 1 || displayStep === 4 ? "mb-3 lg:mb-4" : "mb-10"
             }`}
           >
             {[1, 2, 3, 4].map((step) => (
@@ -367,17 +427,23 @@ export function StoryFlow({
 
           <div
             key={displayStep}
-            className={isExiting ? (EXIT[displayStep] ?? "") : (ENTER[displayStep] ?? "")}
+            className={`min-h-0 ${
+              displayStep === 1 || displayStep === 4 ? "flex flex-1 flex-col" : ""
+            } ${isExiting ? (EXIT[displayStep] ?? "") : (ENTER[displayStep] ?? "")}`}
           >
             {displayStep === 1 && <StepThi />}
-            {displayStep === 2 && <StepMemories />}
+            {displayStep === 2 && (
+              <StepMemories wishImages={wishImageList(liveWishes)} />
+            )}
             {displayStep === 3 && <StepChanTam />}
-            {displayStep === 4 && <WishWall initialFireWishes={fireWishes} />}
+            {displayStep === 4 && <WishWall initialFireWishes={liveWishes} />}
           </div>
 
           {displayStep < 4 ? (
             <div
-              className={`mt-10 flex items-center justify-center gap-3 transition-all duration-500 ${
+              className={`flex shrink-0 items-center justify-center gap-3 transition-all duration-500 ${
+                displayStep === 1 ? "mt-2.5" : "mt-10"
+              } ${
                 btnVisible
                   ? "translate-y-0 opacity-100"
                   : "pointer-events-none translate-y-4 opacity-0"
@@ -395,7 +461,9 @@ export function StoryFlow({
               <button
                 type="button"
                 onClick={() => void goToStep(displayStep + 1)}
-                className="rounded-full bg-linear-to-r from-rose to-petal px-7 py-3 text-sm font-bold text-white shadow-[0_12px_35px_rgba(155,184,150,0.42)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(155,184,150,0.56)] active:scale-[0.985]"
+                className={`rounded-full bg-linear-to-r from-rose to-petal text-sm font-bold text-white shadow-[0_12px_35px_rgba(155,184,150,0.42)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(155,184,150,0.56)] active:scale-[0.985] ${
+                  displayStep === 1 ? "px-5 py-2.5" : "px-7 py-3"
+                }`}
               >
                 {NEXT_LABELS[displayStep]}
               </button>
@@ -430,70 +498,79 @@ export function StoryFlow({
 
 function StepThi() {
   return (
-    <div className="grid items-center gap-10 md:grid-cols-[0.9fr_1.1fr]">
-      <div className="relative mx-auto shrink-0">
-        <div className="absolute -inset-10 rounded-full bg-radial from-rose/30 via-petal/18 to-transparent blur-2xl" />
-        <div className="relative float-slow">
-          <div className="relative h-80 w-60 overflow-hidden rounded-4xl border-[7px] border-white shadow-[0_18px_58px_rgba(155,184,150,0.38)] md:h-85 md:w-64">
-            <Image
-              src="/photos/01-tot-nghiep.png"
-              alt="Việt Thi"
-              fill
-              className="object-cover"
-              sizes="280px"
-              priority
-            />
-          </div>
-          <span
-            className="absolute -right-3 -top-4 text-4xl drop-shadow-md"
-            style={{ transform: "rotate(14deg)" }}
-            aria-hidden
-          >
-            🎓
-          </span>
-          <span
-            className="absolute -bottom-3 -left-4 text-3xl drop-shadow-md"
-            style={{ transform: "rotate(-11deg)" }}
-            aria-hidden
-          >
-            💗
-          </span>
-          <span
-            className="absolute -right-5 top-1/2 text-2xl drop-shadow-md"
-            style={{ transform: "rotate(9deg) translateY(-50%)" }}
-            aria-hidden
-          >
-            ✨
-          </span>
-        </div>
-      </div>
+    <div className="content-panel relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[2rem] px-4 py-4 shadow-[0_24px_90px_rgba(107,117,104,0.12)] ring-1 ring-white/75 sm:px-6 sm:py-5 lg:rounded-[2.5rem] lg:px-8 lg:py-6">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-linear-to-b from-white/45 to-transparent" />
 
-      <div className="space-y-5 text-center md:text-left">
-        <p className="text-xs font-semibold tracking-[0.18em] text-plum/55">
-          CHƯƠNG ĐẦU TIÊN
-        </p>
-        <h2 className="pb-1 font-script text-5xl leading-[1.1] text-navy md:text-6xl">
-          Thi ơi... cậu sắp đi xa rồi 🥺
-        </h2>
-        <p className="text-lg leading-8 text-navy/75">
-          Cả nhà Chánh Tâm đều biết, đây không chỉ là một chuyến đi. Nó là một
-          cột mốc rất đẹp, rất dũng cảm, và cũng khiến tụi mình thấy thương cậu
-          nhiều hơn một chút.
-        </p>
-        <div className="flex flex-wrap justify-center gap-2 text-sm md:justify-start">
-          <span className="rounded-full bg-blush px-4 py-2 font-semibold text-plum shadow-[0_10px_24px_rgba(155,184,150,0.12)]">
-            ✈️ Huế → Mỹ
-          </span>
-          <span className="rounded-full bg-[#f0f4ff] px-4 py-2 font-semibold text-plum shadow-[0_10px_24px_rgba(168,194,249,0.12)]">
-            🏡 Phước Duyên vẫn là nhà
-          </span>
+      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center gap-3 overflow-hidden sm:flex-row sm:items-center sm:gap-6 md:gap-8 lg:gap-10">
+        <div className="relative mx-auto shrink-0 sm:mx-0">
+          <div className="absolute -inset-6 rounded-full bg-radial from-rose/28 via-petal/16 to-transparent blur-2xl" />
+          <div className="relative float-slow">
+            <div className="step1-photo relative overflow-hidden rounded-[1.35rem] border-[5px] border-white shadow-[0_18px_50px_rgba(155,184,150,0.35)]">
+              <Image
+                src="/photos/01-tot-nghiep.png"
+                alt="Việt Thi"
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 140px, (max-width: 1024px) 200px, 260px"
+                priority
+              />
+            </div>
+            <span
+              className="absolute -right-2 -top-2 text-xl drop-shadow-md sm:text-2xl lg:text-3xl"
+              style={{ transform: "rotate(14deg)" }}
+              aria-hidden
+            >
+              🎓
+            </span>
+            <span
+              className="absolute -bottom-2 -left-2 text-lg drop-shadow-md sm:text-xl lg:text-2xl"
+              style={{ transform: "rotate(-11deg)" }}
+              aria-hidden
+            >
+              💗
+            </span>
+          </div>
+        </div>
+
+        <div className="step1-copy flex min-h-0 min-w-0 flex-1 flex-col justify-center gap-2 overflow-y-auto text-center overscroll-contain sm:gap-3 sm:text-left md:gap-3.5">
+          <p className="shrink-0 text-[10px] font-semibold tracking-[0.18em] text-plum/55 sm:text-[11px]">
+            CHƯƠNG ĐẦU TIÊN
+          </p>
+          <h2 className="step1-title shrink-0 pb-0.5 font-script leading-[1.12] text-navy">
+            Thi ơi... cậu sắp đi xa rồi 🥺
+          </h2>
+          <p className="step1-body text-navy/75">
+            Cả nhà Chánh Tâm đều biết, đây không chỉ là một chuyến đi. Nó là một
+            cột mốc rất đẹp, rất dũng cảm, và cũng khiến tụi mình thấy thương cậu
+            nhiều hơn một chút.
+          </p>
+          <div className="flex shrink-0 flex-wrap justify-center gap-1.5 text-[11px] sm:justify-start sm:gap-2 sm:text-xs md:text-sm">
+            <span className="rounded-full bg-blush px-3 py-1.5 font-semibold text-plum shadow-[0_10px_24px_rgba(155,184,150,0.12)]">
+              ✈️ Huế → Mỹ
+            </span>
+            <span className="rounded-full bg-[#f0f4ff] px-3 py-1.5 font-semibold text-plum shadow-[0_10px_24px_rgba(168,194,249,0.12)]">
+              🏡 Phước Duyên vẫn là nhà
+            </span>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function StepMemories() {
+function StepMemories({ wishImages = [] }: { wishImages?: string[] }) {
+  const wishPhotos = wishImages.map((src, index) => ({
+    src,
+    tilt: MEMORY_TILTS[index % MEMORY_TILTS.length],
+    tall: index % 3 === 1,
+    fromWish: true as const,
+  }));
+
+  const photos = [
+    ...wishPhotos,
+    ...MEMORY_PHOTOS.map((photo) => ({ ...photo, fromWish: false as const })),
+  ];
+
   return (
     <div>
       <div className="mb-8 text-center">
@@ -505,19 +582,22 @@ function StepMemories() {
         </h2>
         <p className="mt-2 text-navy/60">
           Mỗi tấm ảnh giống như một mảnh ký ức đang chạy theo cậu vậy đó.
+          {wishPhotos.length > 0
+            ? " Có cả những tấm được gửi kèm lời chúc nữa."
+            : null}
         </p>
       </div>
 
       <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-        {MEMORY_PHOTOS.map(({ src, tilt, tall }, index) => (
+        {photos.map(({ src, tilt, tall, fromWish }, index) => (
           <div
-            key={src}
+            key={`${fromWish ? "wish" : "mem"}-${src}`}
             className="mb-4 break-inside-avoid"
             style={{ transform: `rotate(${tilt})` }}
           >
             <figure
               className="polaroid-card rounded-[1.4rem] bg-white p-2.5 shadow-[0_12px_28px_rgba(0,0,0,0.08)]"
-              style={{ animationDelay: `${index * 120}ms` } as React.CSSProperties}
+              style={{ animationDelay: `${Math.min(index, 16) * 90}ms` } as React.CSSProperties}
             >
               <div
                 className={`relative overflow-hidden rounded-xl bg-blush ${
@@ -526,13 +606,20 @@ function StepMemories() {
               >
                 <Image
                   src={src}
-                  alt=""
+                  alt={fromWish ? "Ảnh gửi kèm lời chúc" : ""}
                   fill
                   className="object-cover transition duration-700 hover:scale-[1.03]"
                   sizes="(max-width: 768px) 100vw, 360px"
+                  unoptimized={fromWish || src.startsWith("http")}
                 />
               </div>
-              <div className="h-6" />
+              <div className="flex h-6 items-center justify-center">
+                {fromWish ? (
+                  <span className="text-[10px] font-semibold tracking-[0.12em] text-plum/45">
+                    TỪ LỜI CHÚC 💌
+                  </span>
+                ) : null}
+              </div>
             </figure>
           </div>
         ))}
