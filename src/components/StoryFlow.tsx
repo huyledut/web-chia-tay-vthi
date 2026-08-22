@@ -389,7 +389,7 @@ export function StoryFlow({
               <span className="shrink-0 text-base">{isOpening ? "🎶" : "💗"}</span>
               {isOpening
                 ? "Tiếng lòng Chánh Tâm đang ngân lên rồi..."
-                : "Chạm vào lá thư để phát nên tiếng lòng của anh chị em Chánh Tâm nhé!"}
+                : "Chạm vào lá thư để phát lên tiếng lòng của anh chị em Chánh Tâm nhé!"}
             </p>
           </div>
         </section>
@@ -538,7 +538,7 @@ function StepThi() {
           </h2>
           <p className="step1-body text-pretty text-navy/75">
             Gia đình Chánh Tâm đều biết, đây không chỉ là một chuyến đi mà còn là
-            một cột mốc đánh dấu sự trưởng thành, dũng cảm của cậu. Cả nhà tin
+            một cột mốc đánh dấu sự trưởng thành, sự dũng cảm của cậu. Cả nhà tin
             cậu sẽ có một hành trình mới rực rỡ và chúng mình sẽ luôn ủng hộ,
             dõi theo cậu từ Huế.
           </p>
@@ -649,8 +649,8 @@ function StepChanTam() {
           Đi hết mình, về hết lòng cậu hen! 🏡
         </h2>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-navy/75 sm:text-base sm:leading-8 md:text-lg">
-          Ngôi nhà Phước Duyên và cả gia đình Chánh Tâm luôn trừ một chỗ trống
-          chờ cậu về — vị trí của cậu ở trong tim mọi người, nên nhớ lấp đầy
+          Ngôi nhà Phước Duyên và cả gia đình Chánh Tâm luôn trừa một chỗ trống
+          chờ cậu về — vị trí của cậu là trong tim mọi người, nên nhớ lấp đầy
           khoảng trống đó vào một ngày không xa nhé. Nếu ngoài kia sóng gió thì
           về đây tránh bão bất cứ lúc nào cậu muốn. Cửa nhà luôn mở, đón cậu
           trở về. Cả nhà thương Thi.
