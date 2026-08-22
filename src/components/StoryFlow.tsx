@@ -49,7 +49,7 @@ const CONFETTI_POOL = ["🌸", "💗", "✨", "🎀", "💌", "🌷", "⭐", "�
 
 const NEXT_LABELS: Record<number, string> = {
   1: "Cùng tua lại những khoảnh khắc nhé 🌸",
-  2: "Chánh Tâm mãi là nhà 🏡",
+  2: "Chánh Tâm mãi là gia đình 🏡",
   3: "Mọi người có đôi lời gửi đến Thi iu dấu nè 💌",
 };
 
@@ -352,15 +352,15 @@ export function StoryFlow({
           style={{ perspective: "1500px" }}
         >
           <div className="relative max-w-3xl shrink-0 px-1">
-            <p className="mb-2 inline-flex rounded-full bg-white/78 px-3 py-1.5 text-[10px] font-semibold tracking-[0.16em] text-plum/75 shadow-[0_10px_30px_rgba(155,184,150,0.18)] ring-1 ring-white/70 backdrop-blur-sm sm:mb-3 sm:px-4 sm:py-2 sm:text-xs">
-              THƯ NHỎ TỪ CHÁNH TÂM
+            <p className="mb-2 inline-flex max-w-[95%] rounded-full bg-white/78 px-3 py-1.5 text-[10px] font-semibold tracking-[0.08em] text-plum/75 shadow-[0_10px_30px_rgba(155,184,150,0.18)] ring-1 ring-white/70 backdrop-blur-sm sm:mb-3 sm:px-4 sm:py-2 sm:text-xs sm:tracking-[0.12em]">
+              Lá thư nhỏ, tình thương to
             </p>
-            <h1 className="step0-title pb-0.5 font-script leading-[1.1] text-navy drop-shadow-sm">
-              Thi ơi, có thư này gửi cho cậu nè 💌
+            <h1 className="step0-title mx-auto max-w-[22ch] pb-0.5 font-script leading-[1.15] text-balance text-navy drop-shadow-sm sm:max-w-none">
+              Thi ơi, có lá thư gói ghém yêu thương Chánh Tâm gửi cậu nè
             </h1>
-            <p className="step0-sub mx-auto mt-2 max-w-xl text-navy/70 sm:mt-3">
-              Bên trong là một chút thương, một chút nhớ, và rất nhiều điều muốn
-              gửi theo cậu trong hành trình mới.
+            <p className="step0-sub mx-auto mt-2 max-w-xl text-pretty text-navy/70 sm:mt-3">
+              Bên trong là một số điều mọi người gửi cậu kèm nhiều tình thương,
+              nhiều nỗi nhớ để cậu làm hành trang cho hành trình sắp tới.
             </p>
           </div>
 
@@ -385,14 +385,11 @@ export function StoryFlow({
           </button>
 
           <div className="mt-4 shrink-0 space-y-2 sm:mt-5 sm:space-y-3">
-            <p className="inline-flex items-center gap-2 rounded-full bg-white/80 px-4 py-1.5 text-xs font-semibold text-plum shadow-[0_10px_35px_rgba(155,184,150,0.2)] ring-1 ring-white/75 backdrop-blur-sm sm:px-5 sm:py-2 sm:text-sm">
-              <span className="text-base">{isOpening ? "🎶" : "💗"}</span>
+            <p className="inline-flex max-w-[20rem] items-center justify-center gap-2 rounded-full bg-white/80 px-4 py-1.5 text-center text-[11px] font-semibold leading-snug text-plum shadow-[0_10px_35px_rgba(155,184,150,0.2)] ring-1 ring-white/75 backdrop-blur-sm sm:max-w-md sm:px-5 sm:py-2 sm:text-sm">
+              <span className="shrink-0 text-base">{isOpening ? "🎶" : "💗"}</span>
               {isOpening
-                ? "Nhạc đang ngân lên rồi đó..."
-                : "Chạm vào lá thư để mở nhạc và bắt đầu"}
-            </p>
-            <p className="text-[10px] tracking-[0.14em] text-plum/55 sm:text-xs">
-              BẤT NGỜ NHỎ ĐANG CHỜ PHÍA SAU
+                ? "Tiếng lòng Chánh Tâm đang ngân lên rồi..."
+                : "Chạm vào lá thư để phát nên tiếng lòng của anh chị em Chánh Tâm nhé!"}
             </p>
           </div>
         </section>
@@ -534,22 +531,23 @@ function StepThi() {
 
         <div className="step1-copy flex min-h-0 min-w-0 flex-1 flex-col justify-center gap-2 overflow-y-auto text-center overscroll-contain sm:gap-3 sm:text-left md:gap-3.5">
           <p className="shrink-0 text-[10px] font-semibold tracking-[0.18em] text-plum/55 sm:text-[11px]">
-            CHƯƠNG ĐẦU TIÊN
+            NGÀY ĐÓ SẮP ĐẾN
           </p>
-          <h2 className="step1-title shrink-0 pb-0.5 font-script leading-[1.12] text-navy">
-            Thi ơi... cậu sắp đi xa rồi 🥺
+          <h2 className="step1-title shrink-0 pb-0.5 font-script leading-[1.15] text-balance text-navy">
+            Thi ơi… ngày đó sắp diễn ra rồi… Ngày cậu kéo vali đến vùng đất hứa
           </h2>
-          <p className="step1-body text-navy/75">
-            Cả nhà Chánh Tâm đều biết, đây không chỉ là một chuyến đi. Nó là một
-            cột mốc rất đẹp, rất dũng cảm, và cũng khiến tụi mình thấy thương cậu
-            nhiều hơn một chút.
+          <p className="step1-body text-pretty text-navy/75">
+            Gia đình Chánh Tâm đều biết, đây không chỉ là một chuyến đi mà còn là
+            một cột mốc đánh dấu sự trưởng thành, dũng cảm của cậu. Cả nhà tin
+            cậu sẽ có một hành trình mới rực rỡ và chúng mình sẽ luôn ủng hộ,
+            dõi theo cậu từ Huế.
           </p>
           <div className="flex shrink-0 flex-wrap justify-center gap-1.5 text-[11px] sm:justify-start sm:gap-2 sm:text-xs md:text-sm">
             <span className="rounded-full bg-blush px-3 py-1.5 font-semibold text-plum shadow-[0_10px_24px_rgba(155,184,150,0.12)]">
               ✈️ Huế → Mỹ
             </span>
             <span className="rounded-full bg-[#f0f4ff] px-3 py-1.5 font-semibold text-plum shadow-[0_10px_24px_rgba(168,194,249,0.12)]">
-              🏡 Phước Duyên vẫn là nhà
+              🏡 Chánh Tâm mãi là gia đình
             </span>
           </div>
         </div>
@@ -643,16 +641,19 @@ function StepChanTam() {
         />
       </div>
 
-      <div className="rounded-3xl bg-white px-8 py-7 shadow-[0_10px_38px_rgba(0,0,0,0.08)] ring-1 ring-white/80">
+      <div className="rounded-3xl bg-white px-5 py-6 shadow-[0_10px_38px_rgba(0,0,0,0.08)] ring-1 ring-white/80 sm:px-8 sm:py-7">
         <p className="text-xs font-semibold tracking-[0.18em] text-plum/55">
-          LUÔN CÓ MỘT NƠI CHỜ CẬU
+          CHÁNH TÂM MÃI LÀ GIA ĐÌNH
         </p>
-        <h2 className="mt-3 pb-1 font-script text-4xl leading-[1.1] text-navy sm:text-5xl">
-          Nhà vẫn ở đây, đợi cậu về 🏡
+        <h2 className="mt-3 pb-1 font-script text-3xl leading-[1.15] text-navy sm:text-4xl md:text-5xl">
+          Đi hết mình, về hết lòng cậu hen! 🏡
         </h2>
-        <p className="mt-4 max-w-2xl text-lg leading-8 text-navy/75">
-          Tự Viện Phước Duyên và cả nhà Chánh Tâm vẫn ở đây chờ cậu. Cứ đi hết
-          mình nha Thi, rồi khi nào nhớ, nơi này vẫn dịu dàng mở cửa cho cậu về.
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-navy/75 sm:text-base sm:leading-8 md:text-lg">
+          Ngôi nhà Phước Duyên và cả gia đình Chánh Tâm luôn trừ một chỗ trống
+          chờ cậu về — vị trí của cậu ở trong tim mọi người, nên nhớ lấp đầy
+          khoảng trống đó vào một ngày không xa nhé. Nếu ngoài kia sóng gió thì
+          về đây tránh bão bất cứ lúc nào cậu muốn. Cửa nhà luôn mở, đón cậu
+          trở về. Cả nhà thương Thi.
         </p>
       </div>
     </div>

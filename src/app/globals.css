@@ -250,12 +250,12 @@ body {
 }
 
 .step0-title {
-  font-size: clamp(1.75rem, 2.4vw + 1.2rem, 3.75rem);
+  font-size: clamp(1.45rem, 2vw + 1rem, 3.1rem);
 }
 
 .step0-sub {
-  font-size: clamp(0.875rem, 0.4vw + 0.75rem, 1.125rem);
-  line-height: 1.55;
+  font-size: clamp(0.8125rem, 0.35vw + 0.7rem, 1.05rem);
+  line-height: 1.5;
 }
 
 .envelope-visual {
@@ -282,16 +282,16 @@ body {
 
 @media (max-height: 640px) {
   .envelope-visual {
-    width: min(42vw, 16rem);
+    width: min(40vw, 15rem);
   }
 
   .step0-title {
-    font-size: clamp(1.4rem, 2vw + 0.9rem, 2.2rem);
+    font-size: clamp(1.25rem, 1.8vw + 0.75rem, 1.85rem);
   }
 
   .step0-sub {
-    font-size: 0.85rem;
-    line-height: 1.45;
+    font-size: 0.78rem;
+    line-height: 1.4;
   }
 }
 
@@ -302,12 +302,12 @@ body {
 }
 
 .step1-title {
-  font-size: clamp(1.55rem, 2.8vw + 1.1rem, 3.4rem);
+  font-size: clamp(1.35rem, 2.2vw + 0.95rem, 2.85rem);
 }
 
 .step1-body {
-  font-size: clamp(0.875rem, 0.35vw + 0.8rem, 1.125rem);
-  line-height: 1.65;
+  font-size: clamp(0.8125rem, 0.3vw + 0.72rem, 1.05rem);
+  line-height: 1.6;
 }
 
 @media (min-width: 640px) {
@@ -328,31 +328,31 @@ body {
 
 @media (max-height: 720px) and (min-width: 640px) {
   .step1-photo {
-    height: min(46svh, 16rem);
+    height: min(42svh, 14.5rem);
   }
 
   .step1-title {
-    font-size: clamp(1.45rem, 2.2vw + 0.9rem, 2.6rem);
+    font-size: clamp(1.25rem, 1.8vw + 0.8rem, 2.2rem);
   }
 
   .step1-body {
-    font-size: 0.95rem;
-    line-height: 1.55;
+    font-size: 0.88rem;
+    line-height: 1.5;
   }
 }
 
 @media (orientation: landscape) and (max-height: 520px) {
   .step1-photo {
-    height: min(70svh, 12rem);
+    height: min(68svh, 11rem);
   }
 
   .step1-title {
-    font-size: clamp(1.25rem, 3vh + 0.6rem, 1.8rem);
+    font-size: clamp(1.1rem, 2.5vh + 0.5rem, 1.55rem);
   }
 
   .step1-body {
-    font-size: 0.82rem;
-    line-height: 1.45;
+    font-size: 0.78rem;
+    line-height: 1.4;
   }
 }
 

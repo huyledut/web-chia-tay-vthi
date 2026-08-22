@@ -114,14 +114,15 @@ export function WishWall({
         <div className="relative mb-3 flex shrink-0 items-center justify-between gap-3 lg:mb-4 lg:grid lg:grid-cols-[1fr_auto] lg:items-end lg:gap-8">
           <div className="min-w-0 text-left">
             <p className="hidden text-[11px] font-semibold tracking-[0.18em] text-plum/65 lg:mb-2 lg:inline-flex lg:rounded-full lg:bg-white/78 lg:px-4 lg:py-2 lg:shadow-[0_10px_30px_rgba(155,184,150,0.12)] lg:ring-1 lg:ring-white/75">
-              TRANG LƯU BÚT NHỎ
+              SỔ LƯU BÚT CỦA THI
             </p>
             <h2 className="font-script text-2xl leading-tight text-navy sm:text-3xl lg:mt-2 lg:text-4xl">
-              Lời chúc gửi Việt Thi 💌
+              Những lời thương gửi Thi 💌
             </h2>
-            <p className="mt-1 hidden max-w-xl text-sm leading-6 text-navy/65 lg:mt-2 lg:block">
-              Mỗi lời nhắn là một trang sổ nhỏ — lật từng trang để đọc hết những
-              lời thương gửi theo Thi.
+            <p className="mt-1 line-clamp-2 max-w-xl text-xs leading-5 text-navy/65 sm:text-sm sm:leading-6 lg:mt-2 lg:line-clamp-none">
+              Mỗi lời nhắn là mỗi tấm chân tình mọi người gửi đến cậu — lật từng
+              trang, đọc thật kỹ, gói ghém cất vào trong tim làm hành trang nuôi
+              dưỡng cho chặng đường sắp tới Thi nhé.
             </p>
           </div>
 
